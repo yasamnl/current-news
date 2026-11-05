@@ -1,88 +1,161 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WartaKilat - Portal Berita Hukum & Olahraga Terkini</title>
+    <title>WartaKilat - Media Berita Hukum & Olahraga Terkini</title>
     
-    <!-- DIRECT FIX 3: Bypass Hotlinking Block Gambar -->
+    <!-- DIRECT FIX: Bypass Proteksi Hotlinking Gambar -->
     <meta name="referrer" content="no-referrer">
+    
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- SCRIPT IKLAN 1: Google AdSense / Adsterra Global Auto-Ads -->
-    <!-- Tempelkan script Pop-Under / Auto Ads Anda di sini -->
+    <style>
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen selection:bg-amber-500 selection:text-slate-950">
 
-    <!-- HEADER / NAVIGATION BAR -->
-    <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 class="text-2xl font-black tracking-wider text-amber-400">WARTA<span class="text-white">KILAT</span></h1>
-            <nav class="flex gap-4 text-sm font-semibold">
-                <button onclick="filterCategory('all')" class="hover:text-amber-400 transition">Berita Utama</button>
-                <button onclick="filterCategory('hukum')" class="text-red-400 hover:underline">⚖️ Hukum</button>
-                <button onclick="filterCategory('olahraga')" class="text-green-400 hover:underline">⚽ Olahraga</button>
+    <!-- HEADER / NAVIGATION BAR (Glassmorphism) -->
+    <header class="glass-nav sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3.5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center font-black font-heading text-slate-950 text-xl shadow-lg shadow-amber-500/20">
+                    W
+                </div>
+                <h1 class="text-2xl font-extrabold font-heading tracking-tight text-white">
+                    WARTA<span class="text-amber-400">KILAT</span>
+                </h1>
+            </div>
+            
+            <!-- MENU NAVIGASI KATEGORI -->
+            <nav class="flex items-center gap-2 text-sm font-semibold">
+                <button onclick="filterCategory('all')" id="btn-all" class="px-3.5 py-1.5 rounded-lg bg-amber-400/10 text-amber-400 border border-amber-400/30 transition-all">
+                    🌐 Utama
+                </button>
+                <button onclick="filterCategory('hukum')" id="btn-hukum" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all">
+                    ⚖️ Hukum
+                </button>
+                <button onclick="filterCategory('olahraga')" id="btn-olahraga" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all">
+                    ⚽ Olahraga
+                </button>
             </nav>
         </div>
     </header>
 
-    <!-- CONTAINER IKLAN BANNER ATAS (AdSense 1 / Monetag) -->
-    <div class="max-w-6xl mx-auto px-4 my-4 text-center">
-        <div class="bg-gray-200 border border-dashed border-gray-400 py-4 rounded-md">
-            <!-- SLOT IKLAN BANNER ATAS 728x90 -->
-            <span class="text-xs text-gray-500 block mb-1">SPONSORED ADVERTISEMENT</span>
-            <div id="ad-slot-header">
-                <!-- Kode Script Iklan Banner Anda -->
+    <!-- BANNER SPONSOR / IKLAN ATAS -->
+    <div class="max-w-6xl mx-auto px-4 mt-6">
+        <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden border border-slate-800">
+            <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-2">SPONSORED ADVERTISEMENT</span>
+            <div id="ad-slot-header" class="min-h-[90px] flex items-center justify-center text-slate-600 text-xs">
+                <!-- Sisipkan Script Kode Iklan Banner 728x90 (AdSense / Monetag / Adsterra) -->
+                [ Slot Iklan Banner Atas ]
             </div>
         </div>
     </div>
 
-    <!-- MAIN CONTENT AREA -->
-    <main class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <!-- MAIN LAYOUT GRID -->
+    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- ARTICLE FEED (2 Kolom) -->
-        <section class="md:col-span-2 space-y-6" id="news-feed">
-            <p class="text-gray-500 animate-pulse">Memuat berita terkini...</p>
+        <!-- FEED BERITA UTAMA (2 Kolom) -->
+        <section class="lg:col-span-2 space-y-6" id="news-feed">
+            <!-- Loading Indicator -->
+            <div class="glass-card rounded-2xl p-8 text-center animate-pulse">
+                <div class="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-slate-400 font-medium">Memuat berita terbaru & terpercaya...</p>
+            </div>
         </section>
 
         <!-- SIDEBAR (1 Kolom) -->
         <aside class="space-y-6">
-            <!-- BOX IKLAN 2 (AdSense 2 / Native Ads) -->
-            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <span class="text-xs text-gray-400 block mb-2">ADVERTISEMENT</span>
-                <div id="ad-slot-sidebar" class="min-h-[250px] bg-gray-100 flex items-center justify-center">
-                    <!-- Kode Script Iklan AdSense 2 / Adsterra Sidebar -->
+            <!-- WIDGET IKLAN SIDEBAR -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800">
+                <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-3">ADVERTISEMENT</span>
+                <div id="ad-slot-sidebar" class="min-h-[250px] bg-slate-900/50 rounded-xl flex items-center justify-center text-xs text-slate-600 border border-slate-800/80">
+                    <!-- Sisipkan Script Kode Iklan Sidebar (300x250) -->
+                    [ Slot Banner Iklan Sidebar ]
                 </div>
             </div>
 
-            <!-- TRENDING WIDGET -->
-            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <h3 class="font-bold text-lg mb-3 text-slate-800 border-b pb-2">⚡ Paling Banyak Dibaca</h3>
-                <ul class="space-y-3 text-sm" id="trending-list">
-                    <!-- Populated by JS -->
+            <!-- INFOS / KREDIT SUMBER BERITA -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800">
+                <h3 class="font-heading font-bold text-base text-white mb-3 flex items-center gap-2">
+                    <span class="text-amber-400">📡</span> Sumber Feed Resmi
+                </h3>
+                <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                    Seluruh berita di agregasi secara otomatis dari kanal RSS resmi penyedia media nasional:
+                </p>
+                <ul class="space-y-2 text-xs font-medium">
+                    <li class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
+                        <span class="text-slate-300">Antara News (Hukum & Olahraga)</span>
+                        <a href="https://www.antaranews.com" target="_blank" rel="noopener" class="text-amber-400 hover:underline">Web ↗</a>
+                    </li>
+                    <li class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
+                        <span class="text-slate-300">Tempo.co (Hukum & Olahraga)</span>
+                        <a href="https://www.tempo.co" target="_blank" rel="noopener" class="text-amber-400 hover:underline">Web ↗</a>
+                    </li>
                 </ul>
             </div>
         </aside>
 
     </main>
 
-    <!-- FRONTEND JAVASCRIPT LOGIC -->
+    <!-- FOOTER MODAL & INFO -->
+    <footer class="border-t border-slate-800/80 mt-12 py-8 bg-slate-950 text-center text-xs text-slate-500">
+        <div class="max-w-6xl mx-auto px-4">
+            <p class="mb-2">© 2026 <strong class="text-slate-400">WartaKilat Digital Media</strong>. Otomatisasi Berita Berbasis Jamstack.</p>
+            <p>Konten dirangkum secara otomatis. Hak cipta berita sepenuhnya milik masing-masing media penerbit.</p>
+        </div>
+    </footer>
+
+    <!-- FRONTEND LOGIC & SUPABASE INTEGRATION -->
     <script>
-        // Inisialisasi Client Supabase
-        const SUPABASE_URL = "https://PROJECT_ID.supabase.co"; // Ganti dengan Supabase URL Anda
-        const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";           // Ganti dengan Anon Key Anda
+        // KONEKSI DB: Ganti dengan Supabase URL & Anon Key milik Anda
+        const SUPABASE_URL = "https://xxxx.supabase.co"; 
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJKV1QiLCJ..."; 
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentCategory = 'all';
 
         async function fetchNews() {
             const feedContainer = document.getElementById('news-feed');
-            feedContainer.innerHTML = `<p class="text-gray-500 animate-pulse">Memuat berita terkini...</p>`;
+            feedContainer.innerHTML = `
+                <div class="glass-card rounded-2xl p-8 text-center animate-pulse">
+                    <div class="w-10 h-10 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p class="text-slate-400 font-medium">Menghubungkan ke Supabase & memuat berita...</p>
+                </div>
+            `;
 
             let query = _supabase.from('articles').select('*').order('created_at', { ascending: false }).limit(20);
             
@@ -92,44 +165,83 @@
 
             const { data: articles, error } = await query;
 
-            if (error || !articles.length) {
-                feedContainer.innerHTML = `<p class="text-red-500">Belum ada berita tersedia.</p>`;
+            if (error || !articles || articles.length === 0) {
+                feedContainer.innerHTML = `
+                    <div class="glass-card rounded-2xl p-8 text-center border-rose-500/20">
+                        <p class="text-rose-400 font-medium">Belum ada berita yang tersedia.</p>
+                        <p class="text-xs text-slate-500 mt-2">Pastikan GitHub Actions Scraper Anda sudah dieksekusi setidaknya 1 kali.</p>
+                    </div>
+                `;
                 return;
             }
 
             feedContainer.innerHTML = '';
             
             articles.forEach((item, index) => {
-                // Badge Color Logic
+                // Styling Kategori Dinamis
                 const isHukum = item.category === 'hukum';
-                const badgeColor = isHukum ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
+                const categoryBadge = isHukum 
+                    ? `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">⚖️ Hukum</span>`
+                    : `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">⚽ Olahraga</span>`;
                 
-                // Parse TL;DR JSON
-                const tldrItems = Array.isArray(item.tldr) ? item.tldr.map(pt => `<li>• ${pt}</li>`).join('') : '';
+                // Format TL;DR (3 Poin Ringkasan AI)
+                const tldrItems = Array.isArray(item.tldr) 
+                    ? item.tldr.map(pt => `<li class="flex items-start gap-2"><span class="text-amber-400 font-bold">•</span> <span>${pt}</span></li>`).join('') 
+                    : '';
+
+                // Ekstraksi Domain Sumber Berita untuk Tampilan Link
+                let domainName = "Situs Sumber";
+                try {
+                    const parsedUrl = new URL(item.source_url);
+                    domainName = parsedUrl.hostname.replace('www.', '');
+                } catch(e) {}
 
                 const cardHTML = `
-                    <article class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
-                        <img src="${item.image_url}" alt="${item.title}" class="w-full h-56 object-cover" loading="lazy">
-                        <div class="p-5">
-                            <span class="inline-block px-2.5 py-0.5 rounded text-xs font-bold uppercase ${badgeColor} mb-2">
-                                ${item.category}
-                            </span>
-                            <h2 class="text-xl font-bold mb-2 text-slate-900 leading-snug">
-                                <a href="${item.source_url}" target="_blank" rel="noopener" class="hover:text-amber-600">${item.title}</a>
+                    <article class="glass-card rounded-2xl overflow-hidden hover:border-slate-700 transition-all duration-300 group">
+                        <!-- THUMBNAIL GAMBAR -->
+                        <div class="relative overflow-hidden h-60 bg-slate-900">
+                            <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-4">
+                                ${categoryBadge}
+                            </div>
+                        </div>
+
+                        <!-- KONTEN BERITA -->
+                        <div class="p-6">
+                            <h2 class="text-xl font-bold font-heading mb-3 text-white leading-snug group-hover:text-amber-400 transition-colors">
+                                <a href="${item.source_url}" target="_blank" rel="noopener">
+                                    ${item.title}
+                                </a>
                             </h2>
                             
-                            <!-- FEATURE TL;DR 30 DETIK -->
+                            <!-- BOX TL;DR 30 DETIK (GROQ AI SUMMARY) -->
                             ${tldrItems ? `
-                            <div class="bg-amber-50 border-l-4 border-amber-400 p-3 my-3 text-xs text-amber-900 rounded-r">
-                                <p class="font-bold mb-1">⚡ Rangkuman 30 Detik (TL;DR):</p>
-                                <ul class="space-y-1">${tldrItems}</ul>
+                            <div class="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 my-4 text-xs text-amber-200/90">
+                                <p class="font-bold text-amber-400 mb-2 flex items-center gap-1.5 uppercase tracking-wider">
+                                    <span>⚡</span> Rangkuman 30 Detik (TL;DR):
+                                </p>
+                                <ul class="space-y-1.5 text-slate-300 font-normal leading-relaxed">
+                                    ${tldrItems}
+                                </ul>
                             </div>` : ''}
 
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">${item.summary}</p>
+                            <p class="text-slate-400 text-sm mb-5 leading-relaxed line-clamp-3">
+                                ${item.summary}
+                            </p>
                             
-                            <div class="flex justify-between items-center text-xs text-gray-400 pt-3 border-t">
-                                <span>${new Date(item.created_at).toLocaleDateString('id-ID')}</span>
-                                <a href="${item.source_url}" target="_blank" rel="noopener" class="font-semibold text-slate-700 hover:underline">Baca Selengkapnya di Sumber Asli &rarr;</a>
+                            <!-- FOOTER KARTU & LINK KE INTERNET -->
+                            <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1">
+                                    🕒 ${new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                </span>
+                                
+                                <!-- LINK TOMBOL SUMBER BERITA ASLI -->
+                                <a href="${item.source_url}" target="_blank" rel="noopener" 
+                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-amber-300 font-semibold transition-colors border border-slate-700">
+                                    <span>Sumber: ${domainName}</span>
+                                    <span class="text-xs">↗</span>
+                                </a>
                             </div>
                         </div>
                     </article>
@@ -137,13 +249,14 @@
                 
                 feedContainer.insertAdjacentHTML('beforeend', cardHTML);
 
-                // Injeksi Iklan In-Article setelah artikel ke-2
+                // INJEKSI IKLAN DI TENGAH FEED (SETELAH BERITA KE-2)
                 if (index === 1) {
                     const adInFeed = `
-                        <div class="bg-gray-100 p-4 border border-dashed border-gray-300 rounded text-center my-4">
-                            <span class="text-xs text-gray-400 block mb-1">SPONSORED CONTENT</span>
-                            <!-- SLOT IKLAN MID-FEED (AdSense / Monetag Native) -->
-                            <div id="ad-slot-midfeed"></div>
+                        <div class="glass-card rounded-2xl p-4 text-center my-6 border border-slate-800">
+                            <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-2">SPONSORED CONTENT</span>
+                            <div id="ad-slot-midfeed" class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
+                                [ Slot Iklan In-Feed Artikel ]
+                            </div>
                         </div>
                     `;
                     feedContainer.insertAdjacentHTML('beforeend', adInFeed);
@@ -153,10 +266,20 @@
 
         function filterCategory(cat) {
             currentCategory = cat;
+            
+            // Update Active Tab UI
+            ['all', 'hukum', 'olahraga'].forEach(c => {
+                const btn = document.getElementById(`btn-${c}`);
+                if (c === cat) {
+                    btn.className = "px-3.5 py-1.5 rounded-lg bg-amber-400/10 text-amber-400 border border-amber-400/30 transition-all font-bold";
+                } else {
+                    btn.className = "px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all";
+                }
+            });
+
             fetchNews();
         }
 
-        // Run On Initial Load
         document.addEventListener("DOMContentLoaded", fetchNews);
     </script>
 </body>

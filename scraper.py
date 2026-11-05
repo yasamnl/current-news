@@ -15,7 +15,7 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 groq_client = Groq(api_key=GROQ_API_KEY)
 
-# 2. Konfigurasi Feed (Mudah Ditambah/Diedit)
+# Konfigurasi RSS Target (Dapat Anda tambah/sesuaikan kapan saja)
 RSS_FEEDS = {
     'hukum': [
         'https://www.antaranews.com/rss/hukum.xml',
