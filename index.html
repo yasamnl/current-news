@@ -8,7 +8,7 @@
     <!-- DIRECT FIX: Bypass Proteksi Hotlinking Gambar -->
     <meta name="referrer" content="no-referrer">
     
-    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
@@ -47,7 +47,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen selection:bg-amber-500 selection:text-slate-950">
 
-    <!-- HEADER / NAVIGATION BAR (Glassmorphism) -->
+    <!-- HEADER / NAVIGATION BAR -->
     <header class="glass-nav sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-3.5 flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -96,18 +96,16 @@
     <!-- MAIN LAYOUT GRID -->
     <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- FEED BERITA UTAMA (2 Kolom) -->
+        <!-- FEED BERITA UTAMA -->
         <section class="lg:col-span-2 space-y-6" id="news-feed">
-            <!-- Loading Indicator -->
             <div class="glass-card rounded-2xl p-8 text-center animate-pulse">
                 <div class="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                 <p class="text-slate-400 font-medium">Memuat berita terbaru & terpercaya...</p>
             </div>
         </section>
 
-        <!-- SIDEBAR (1 Kolom) -->
+        <!-- SIDEBAR -->
         <aside class="space-y-6">
-            <!-- WIDGET IKLAN SIDEBAR -->
             <div class="glass-card rounded-2xl p-5 border border-slate-800">
                 <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-3">ADVERTISEMENT</span>
                 <div id="ad-slot-sidebar" class="min-h-[250px] bg-slate-900/50 rounded-xl flex items-center justify-center text-xs text-slate-600 border border-slate-800/80">
@@ -123,48 +121,18 @@
                     <script src="https://bauval.org/22/36969eeb9c2e0885de6aaec06d71cdba"></script>
                 </div>
             </div>
-
-            <!-- INFOS / KREDIT SUMBER BERITA -->
-            <div class="glass-card rounded-2xl p-5 border border-slate-800">
-                <h3 class="font-heading font-bold text-base text-white mb-3 flex items-center gap-2">
-                    <span class="text-amber-400">📡</span> Sumber Feed Resmi
-                </h3>
-                <p class="text-xs text-slate-400 leading-relaxed mb-4">
-                    Seluruh berita di-agregasi secara otomatis dari kanal RSS resmi penyedia media nasional:
-                </p>
-                <ul class="space-y-2 text-xs font-medium">
-                    <li class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
-                        <span class="text-slate-300">Antara News (Hukum & Olahraga)</span>
-                        <a href="https://www.antaranews.com" target="_blank" rel="noopener" class="text-amber-400 hover:underline">Web ↗</a>
-                    </li>
-                    <li class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
-                        <span class="text-slate-300">Tempo.co (Hukum & Olahraga)</span>
-                        <a href="https://www.tempo.co" target="_blank" rel="noopener" class="text-amber-400 hover:underline">Web ↗</a>
-                    </li>
-                </ul>
-            </div>
         </aside>
 
     </main>
 
-    <!-- FOOTER MODAL & INFO -->
-    <footer class="border-t border-slate-800/80 mt-12 py-8 bg-slate-950 text-center text-xs text-slate-500">
-        <div class="max-w-6xl mx-auto px-4">
-            <p class="mb-2">© 2026 <strong class="text-slate-400">WartaKilat Digital Media</strong>. Otomatisasi Berita Berbasis Jamstack.</p>
-            <p>Konten dirangkum secara otomatis. Hak cipta berita sepenuhnya milik masing-masing media penerbit.</p>
-        </div>
-    </footer>
-
     <!-- FRONTEND LOGIC & SUPABASE INTEGRATION -->
     <script>
         // =========================================================================
-        // DIRECT FIX 1: URL & PUBLISHABLE KEY SUPABASE
-        // Masukkan URL Supabase asli & Publishable Key (Anon Key) Anda secara langsung.
-        // (Aman dipasang di frontend & mencegah error process.env / Push Protection).
+        // IMPORTANT: PASTI KAN DUA STRING DI BAWAH DIISI DENGAN BENAR DARI SUPABASE
         // =========================================================================
-       
         const SUPABASE_URL = "https://dcfkdlqryxupictffswz.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_7g6dywySEVKhhovtn4GlTg_h8RLd3MT"; 
+        
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentCategory = 'all';
@@ -181,16 +149,30 @@
             let query = _supabase.from('articles').select('*').order('created_at', { ascending: false }).limit(20);
             
             if (currentCategory !== 'all') {
-                query = query.eq('category', currentCategory);
+                query = query.ilike('category', currentCategory);
             }
 
             const { data: articles, error } = await query;
 
-            if (error || !articles || articles.length === 0) {
+            // JIKA TERJADI ERROR KONEKSI ATAU KUNCI SALAH
+            if (error) {
+                console.error("Supabase Error:", error);
                 feedContainer.innerHTML = `
-                    <div class="glass-card rounded-2xl p-8 text-center border-rose-500/20">
-                        <p class="text-rose-400 font-medium">Belum ada berita yang tersedia.</p>
-                        <p class="text-xs text-slate-500 mt-2">Pastikan GitHub Actions Scraper Anda sudah dieksekusi setidaknya 1 kali dan URL/Key Supabase di atas sudah diisi dengan benar.</p>
+                    <div class="glass-card rounded-2xl p-8 text-center border-rose-500/30 bg-rose-500/10">
+                        <p class="text-rose-400 font-bold text-lg">Gagal Terhubung ke Database!</p>
+                        <p class="text-xs text-rose-300 mt-2">Pesan Detail: ${error.message}</p>
+                        <p class="text-xs text-slate-400 mt-4">Periksa kembali SUPABASE_URL dan SUPABASE_ANON_KEY pada file index.html Anda.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // JIKA DATABASE KOSONG
+            if (!articles || articles.length === 0) {
+                feedContainer.innerHTML = `
+                    <div class="glass-card rounded-2xl p-8 text-center border-amber-500/20">
+                        <p class="text-amber-400 font-medium">Data Berita Masih Kosong di Database.</p>
+                        <p class="text-xs text-slate-400 mt-2">Pastikan tabel 'articles' di Supabase Anda sudah terisi data dari skrip scraper Python.</p>
                     </div>
                 `;
                 return;
@@ -199,18 +181,15 @@
             feedContainer.innerHTML = '';
             
             articles.forEach((item, index) => {
-                // Styling Kategori Dinamis
-                const isHukum = item.category === 'hukum';
+                const isHukum = item.category.toLowerCase() === 'hukum';
                 const categoryBadge = isHukum 
                     ? `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">⚖️ Hukum</span>`
                     : `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">⚽ Olahraga</span>`;
                 
-                // Format TL;DR (3 Poin Ringkasan AI)
                 const tldrItems = Array.isArray(item.tldr) 
                     ? item.tldr.map(pt => `<li class="flex items-start gap-2"><span class="text-amber-400 font-bold">•</span> <span>${pt}</span></li>`).join('') 
                     : '';
 
-                // Ekstraksi Domain Sumber Berita untuk Tampilan Link
                 let domainName = "Situs Sumber";
                 try {
                     const parsedUrl = new URL(item.source_url);
@@ -219,7 +198,6 @@
 
                 const cardHTML = `
                     <article class="glass-card rounded-2xl overflow-hidden hover:border-slate-700 transition-all duration-300 group">
-                        <!-- THUMBNAIL GAMBAR -->
                         <div class="relative overflow-hidden h-60 bg-slate-900">
                             <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
@@ -228,7 +206,6 @@
                             </div>
                         </div>
 
-                        <!-- KONTEN BERITA -->
                         <div class="p-6">
                             <h2 class="text-xl font-bold font-heading mb-3 text-white leading-snug group-hover:text-amber-400 transition-colors">
                                 <a href="${item.source_url}" target="_blank" rel="noopener">
@@ -236,7 +213,6 @@
                                 </a>
                             </h2>
                             
-                            <!-- BOX TL;DR 30 DETIK (GROQ AI SUMMARY) -->
                             ${tldrItems ? `
                             <div class="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 my-4 text-xs text-amber-200/90">
                                 <p class="font-bold text-amber-400 mb-2 flex items-center gap-1.5 uppercase tracking-wider">
@@ -251,13 +227,11 @@
                                 ${item.summary}
                             </p>
                             
-                            <!-- FOOTER KARTU & LINK KE INTERNET -->
                             <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-800/80">
                                 <span class="flex items-center gap-1">
                                     🕒 ${new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                                 </span>
                                 
-                                <!-- LINK TOMBOL SUMBER BERITA ASLI -->
                                 <a href="${item.source_url}" target="_blank" rel="noopener" 
                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-amber-300 font-semibold transition-colors border border-slate-700">
                                     <span>Sumber: ${domainName}</span>
@@ -270,9 +244,7 @@
                 
                 feedContainer.insertAdjacentHTML('beforeend', cardHTML);
 
-                // =========================================================================
-                // DIRECT FIX 2: INJEKSI IKLAN MID-FEED AMAN (Mencegah Kode Bocor di FE)
-                // =========================================================================
+                // INJEKSI IKLAN MID-FEED
                 if (index === 1) {
                     const adInFeedHTML = `
                         <div class="glass-card rounded-2xl p-4 text-center my-6 border border-slate-800">
@@ -284,7 +256,6 @@
                     `;
                     feedContainer.insertAdjacentHTML('beforeend', adInFeedHTML);
 
-                    // Buat dan injeksi tag <script> iklan secara dinamis lewat JS
                     const adSlotContainer = document.getElementById('ad-slot-midfeed');
                     if (adSlotContainer) {
                         const adScript = document.createElement('script');
@@ -300,7 +271,6 @@
         function filterCategory(cat) {
             currentCategory = cat;
             
-            // Update Active Tab UI
             ['all', 'hukum', 'olahraga'].forEach(c => {
                 const btn = document.getElementById(`btn-${c}`);
                 if (c === cat) {
@@ -316,7 +286,7 @@
         document.addEventListener("DOMContentLoaded", fetchNews);
     </script>
 
-    <!-- SCRIPT POPUNDER IKLAN (Di-render paling bawah agar tidak memicu error appendChild) -->
+    <!-- SCRIPT POPUNDER IKLAN -->
     <script data-cfasync="false" src="https://abscloud.org/1/5d2c3a1a77837b656311e2f6ece5c69c"></script>
 </body>
 </html>
