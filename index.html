@@ -1,447 +1,767 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="G_1Z2Y3-eBh1fThV1R12P0JDu9TiWixaKjfK9bTrBUQ" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="google-site-verification"
+      content="G_1Z2Y3-eBh1fThV1R12P0JDu9TiWixaKjfK9bTrBUQ"
+    />
     <title>WartaKilat - Agregator Berita Hangat Terkini</title>
-    
-    <meta name="referrer" content="no-referrer">
-    
+
+    <meta name="referrer" content="no-referrer" />
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: { brand: '#f59e0b' },
-                    animation: { 'bounce-short': 'bounce 1s ease-in-out 3' }
-                }
-            }
-        }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: { brand: "#f59e0b" },
+            animation: { "bounce-short": "bounce 1s ease-in-out 3" },
+          },
+        },
+      };
     </script>
-    
+
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <style>
-        body { transition: background-color 0.3s ease, color 0.3s ease; }
-        .chat-container { scrollbar-width: thin; }
-        /* Memastikan gambar banner iklan tidak melebihi lebar layar di mobile */
-        .ad-container img, .ad-container iframe { max-width: 100% !important; overflow: hidden; }
+      body {
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
+      }
+      .chat-container {
+        scrollbar-width: thin;
+      }
+      /* Memastikan gambar banner iklan tidak melebihi lebar layar di mobile */
+      .ad-container img,
+      .ad-container iframe {
+        max-width: 100% !important;
+        overflow: hidden;
+      }
     </style>
 
     <!-- [1/5] SLOT -->
-    <script data-cfasync="false" src="https://abscloud.org/1/5d2c3a1a77837b656311e2f6ece5c69c"></script>
-</head>
-<body class="bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-gray-100 min-h-screen flex flex-col">
-
+    <script
+      data-cfasync="false"
+      src="https://abscloud.org/1/5d2c3a1a77837b656311e2f6ece5c69c"
+    ></script>
+  </head>
+  <body
+    class="bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-gray-100 min-h-screen flex flex-col"
+  >
     <!-- HEADER / NAVIGATION BAR -->
-    <header class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-gray-200 dark:border-slate-700 sticky top-0 z-40 transition-colors">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
-            
-            <div class="flex items-center gap-3">
-                <a href="#" onclick="resetFilter()" class="flex items-center gap-2 text-2xl font-black tracking-wider text-amber-500 dark:text-amber-400">
-                    <i data-lucide="zap" class="w-7 h-7 fill-amber-500 text-amber-500"></i>
-                    <span>WARTA<span class="text-slate-800 dark:text-white">KILAT</span></span>
-                </a>
-            </div>
-
-            <div class="flex-1 max-w-md hidden sm:block relative">
-                <div class="relative">
-                    <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Cari berita hangat..." 
-                        class="w-full pl-10 pr-4 py-2 text-sm bg-gray-100 dark:bg-slate-700 border border-transparent dark:border-slate-600 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-900 dark:text-white placeholder-gray-400">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-gray-400"></i>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2 sm:gap-3">
-                <button onclick="toggleMobileSearch()" class="sm:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700">
-                    <i data-lucide="search" class="w-5 h-5"></i>
-                </button>
-                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition" title="Ganti Mode Tampilan">
-                    <i id="themeIconSun" data-lucide="sun" class="w-5 h-5 hidden text-amber-400"></i>
-                    <i id="themeIconMoon" data-lucide="moon" class="w-5 h-5 text-slate-600"></i>
-                </button>
-                <button onclick="toggleAboutModal()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full bg-amber-500 hover:bg-amber-600 text-slate-900 transition shadow-sm">
-                    <i data-lucide="info" class="w-4 h-4"></i>
-                    <span class="hidden md:inline">Tentang WartaKilat</span>
-                </button>
-            </div>
+    <header
+      class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-gray-200 dark:border-slate-700 sticky top-0 z-40 transition-colors"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4"
+      >
+        <div class="flex items-center gap-3">
+          <a
+            href="#"
+            onclick="resetFilter()"
+            class="flex items-center gap-2 text-2xl font-black tracking-wider text-amber-500 dark:text-amber-400"
+          >
+            <i
+              data-lucide="zap"
+              class="w-7 h-7 fill-amber-500 text-amber-500"
+            ></i>
+            <span
+              >WARTA<span class="text-slate-800 dark:text-white"
+                >KILAT</span
+              ></span
+            >
+          </a>
         </div>
 
-        <div id="mobileSearchBox" class="hidden px-4 pb-3 sm:hidden">
-            <div class="relative">
-                <input type="text" id="searchInputMobile" onkeyup="handleSearchMobile()" placeholder="Cari berita..." 
-                    class="w-full pl-10 pr-4 py-2 text-sm bg-gray-100 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500">
-                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-gray-400"></i>
-            </div>
+        <div class="flex-1 max-w-md hidden sm:block relative">
+          <div class="relative">
+            <input
+              type="text"
+              id="searchInput"
+              onkeyup="handleSearch()"
+              placeholder="Cari berita hangat..."
+              class="w-full pl-10 pr-4 py-2 text-sm bg-gray-100 dark:bg-slate-700 border border-transparent dark:border-slate-600 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-900 dark:text-white placeholder-gray-400"
+            />
+            <i
+              data-lucide="search"
+              class="w-4 h-4 absolute left-3 top-2.5 text-gray-400"
+            ></i>
+          </div>
         </div>
 
-        <div class="bg-gray-50 dark:bg-slate-800/60 border-t border-gray-200 dark:border-slate-700/50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto no-scrollbar py-2 gap-4">
-                <div class="flex items-center gap-2 whitespace-nowrap text-sm font-medium">
-                    <button onclick="filterCategory('all')" id="btn-cat-all" class="cat-btn active px-3.5 py-1 rounded-full bg-amber-500 text-slate-900 font-bold">Semua Berita</button>
-                    <button onclick="filterCategory('hukum')" id="btn-cat-hukum" class="cat-btn px-3.5 py-1 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700">⚖️ Hukum & Politik</button>
-                    <button onclick="filterCategory('olahraga')" id="btn-cat-olahraga" class="cat-btn px-3.5 py-1 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700">⚽ Olahraga</button>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                    <span>Urutkan:</span>
-                    <select id="sortSelect" onchange="fetchNews()" class="bg-transparent font-semibold text-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer">
-                        <option value="newest" class="dark:bg-slate-800">Terkini</option>
-                        <option value="oldest" class="dark:bg-slate-800">Terlama</option>
-                    </select>
-                </div>
-            </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <button
+            onclick="toggleMobileSearch()"
+            class="sm:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            <i data-lucide="search" class="w-5 h-5"></i>
+          </button>
+          <button
+            id="themeToggleBtn"
+            onclick="toggleTheme()"
+            class="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition"
+            title="Ganti Mode Tampilan"
+          >
+            <i
+              id="themeIconSun"
+              data-lucide="sun"
+              class="w-5 h-5 hidden text-amber-400"
+            ></i>
+            <i
+              id="themeIconMoon"
+              data-lucide="moon"
+              class="w-5 h-5 text-slate-600"
+            ></i>
+          </button>
+          <button
+            onclick="toggleAboutModal()"
+            class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full bg-amber-500 hover:bg-amber-600 text-slate-900 transition shadow-sm"
+          >
+            <i data-lucide="info" class="w-4 h-4"></i>
+            <span class="hidden md:inline">Tentang WartaKilat</span>
+          </button>
         </div>
+      </div>
+
+      <div id="mobileSearchBox" class="hidden px-4 pb-3 sm:hidden">
+        <div class="relative">
+          <input
+            type="text"
+            id="searchInputMobile"
+            onkeyup="handleSearchMobile()"
+            placeholder="Cari berita..."
+            class="w-full pl-10 pr-4 py-2 text-sm bg-gray-100 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500"
+          />
+          <i
+            data-lucide="search"
+            class="w-4 h-4 absolute left-3 top-2.5 text-gray-400"
+          ></i>
+        </div>
+      </div>
+
+      <div
+        class="bg-gray-50 dark:bg-slate-800/60 border-t border-gray-200 dark:border-slate-700/50"
+      >
+        <div
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto no-scrollbar py-2 gap-4"
+        >
+          <div
+            class="flex items-center gap-2 whitespace-nowrap text-sm font-medium"
+          >
+            <button
+              onclick="filterCategory('all')"
+              id="btn-cat-all"
+              class="cat-btn active px-3.5 py-1 rounded-full bg-amber-500 text-slate-900 font-bold"
+            >
+              Semua Berita
+            </button>
+            <button
+              onclick="filterCategory('hukum')"
+              id="btn-cat-hukum"
+              class="cat-btn px-3.5 py-1 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700"
+            >
+              ⚖️ Hukum & Politik
+            </button>
+            <button
+              onclick="filterCategory('olahraga')"
+              id="btn-cat-olahraga"
+              class="cat-btn px-3.5 py-1 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700"
+            >
+              ⚽ Olahraga
+            </button>
+          </div>
+          <div
+            class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap"
+          >
+            <span>Urutkan:</span>
+            <select
+              id="sortSelect"
+              onchange="fetchNews()"
+              class="bg-transparent font-semibold text-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
+            >
+              <option value="newest" class="dark:bg-slate-800">Terkini</option>
+              <option value="oldest" class="dark:bg-slate-800">Terlama</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </header>
 
     <!-- [2/5]  -->
     <!-- Kontainer Iklan ini dirancang agar tidak merusak lebar halaman di Mobile -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 text-center overflow-hidden w-full">
-        <div class="bg-gray-200 dark:bg-slate-800 border border-dashed border-gray-400 dark:border-slate-600 py-4 rounded-md">
-            <span class="text-[10px] text-gray-500 dark:text-gray-400 block mb-1">SPONSORED ADVERTISEMENT</span>
-            <div id="ad-slot-header" class="ad-container flex justify-center w-full overflow-hidden">
-                <!-- Tampilkan 728x90 HANYA di Desktop/Tablet -->
-                <div class="hidden md:block w-full max-w-[728px] overflow-hidden">
-                    <script>
-  atOptions = {
-    'key' : '7072be28562e0b9fbe5a61cdaca00395',
-    'format' : 'iframe',
-    'height' : 90,
-    'width' : 728,
-    'params' : {}
-  };
-</script>
-<script src="https://bauval.org/22/7072be28562e0b9fbe5a61cdaca00395"></script>
-                </div>
-                <!-- Tampilkan Iklan Ukuran Kecil (300x250 atau 320x50) HANYA di Mobile (Opsional) -->
-                <div class="block md:hidden w-full overflow-hidden">
-                    <script>
-  atOptions = {
-    'key' : '36969eeb9c2e0885de6aaec06d71cdba',
-    'format' : 'iframe',
-    'height' : 250,
-    'width' : 300,
-    'params' : {}
-  };
-</script>
-<script src="https://bauval.org/22/36969eeb9c2e0885de6aaec06d71cdba"></script>
-                </div>
-            </div>
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 text-center overflow-hidden w-full"
+    >
+      <div
+        class="bg-gray-200 dark:bg-slate-800 border border-dashed border-gray-400 dark:border-slate-600 py-4 rounded-md"
+      >
+        <span class="text-[10px] text-gray-500 dark:text-gray-400 block mb-1"
+          >SPONSORED ADVERTISEMENT</span
+        >
+        <div
+          id="ad-slot-header"
+          class="ad-container flex justify-center w-full overflow-hidden"
+        >
+          <!-- Tampilkan 728x90 HANYA di Desktop/Tablet -->
+          <div class="hidden md:block w-full max-w-[728px] overflow-hidden">
+            <script>
+              atOptions = {
+                key: "7072be28562e0b9fbe5a61cdaca00395",
+                format: "iframe",
+                height: 90,
+                width: 728,
+                params: {},
+              };
+            </script>
+            <script src="https://bauval.org/22/7072be28562e0b9fbe5a61cdaca00395"></script>
+          </div>
+          <!-- Tampilkan Iklan Ukuran Kecil (300x250 atau 320x50) HANYA di Mobile (Opsional) -->
+          <div class="block md:hidden w-full overflow-hidden">
+            <script>
+              atOptions = {
+                key: "36969eeb9c2e0885de6aaec06d71cdba",
+                format: "iframe",
+                height: 250,
+                width: 300,
+                params: {},
+              };
+            </script>
+            <script src="https://bauval.org/22/36969eeb9c2e0885de6aaec06d71cdba"></script>
+          </div>
         </div>
+      </div>
     </div>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-8">
-        <section id="top-news-section" class="space-y-4">
-            <div class="flex items-center gap-2 border-b border-gray-200 dark:border-slate-700 pb-2">
-                <i data-lucide="flame" class="w-5 h-5 text-amber-500"></i>
-                <h2 class="text-lg font-bold tracking-tight">Berita Teratas & Hangat</h2>
+    <main
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-8"
+    >
+      <section id="top-news-section" class="space-y-4">
+        <div
+          class="flex items-center gap-2 border-b border-gray-200 dark:border-slate-700 pb-2"
+        >
+          <i data-lucide="flame" class="w-5 h-5 text-amber-500"></i>
+          <h2 class="text-lg font-bold tracking-tight">
+            Berita Teratas & Hangat
+          </h2>
+        </div>
+        <div id="top-news-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div
+            class="animate-pulse bg-gray-200 dark:bg-slate-800 h-64 rounded-xl md:col-span-2"
+          ></div>
+          <div
+            class="animate-pulse bg-gray-200 dark:bg-slate-800 h-64 rounded-xl"
+          ></div>
+        </div>
+      </section>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <section class="lg:col-span-2 space-y-4">
+          <div
+            class="flex items-center justify-between border-b border-gray-200 dark:border-slate-700 pb-2"
+          >
+            <h3
+              class="font-bold text-gray-800 dark:text-gray-200"
+              id="feed-title"
+            >
+              Daftar Berita
+            </h3>
+            <span
+              id="result-count"
+              class="text-xs text-gray-500 dark:text-gray-400"
+            ></span>
+          </div>
+
+          <div id="news-feed" class="space-y-4">
+            <p class="text-gray-400 animate-pulse text-sm">
+              Memuat berita terbaru...
+            </p>
+          </div>
+
+          <!-- [3/5] SLOT IKLAN BAWAH -->
+          <div
+            class="mt-6 mb-4 text-center bg-gray-100 dark:bg-slate-800 py-3 rounded-lg border border-dashed border-gray-300 dark:border-slate-700 overflow-hidden w-full"
+          >
+            <span class="text-[10px] text-gray-400 block mb-1"
+              >ADVERTISEMENT</span
+            >
+            <div
+              id="ad-slot-bottom"
+              class="ad-container overflow-hidden w-full"
+            >
+              <script>
+                atOptions = {
+                  key: "36969eeb9c2e0885de6aaec06d71cdba",
+                  format: "iframe",
+                  height: 250,
+                  width: 300,
+                  params: {},
+                };
+              </script>
+              <script src="https://bauval.org/22/36969eeb9c2e0885de6aaec06d71cdba"></script>
             </div>
-            <div id="top-news-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="animate-pulse bg-gray-200 dark:bg-slate-800 h-64 rounded-xl md:col-span-2"></div>
-                <div class="animate-pulse bg-gray-200 dark:bg-slate-800 h-64 rounded-xl"></div>
-            </div>
+          </div>
+
+          <div
+            id="pagination-container"
+            class="hidden flex items-center justify-between border-t border-gray-200 dark:border-slate-700 pt-4 mt-2"
+          >
+            <button
+              id="btn-prev-page"
+              onclick="changePage(-1)"
+              class="flex items-center gap-1 px-4 py-2 text-xs font-bold rounded-lg bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              <i data-lucide="chevron-left" class="w-4 h-4"></i> Sebelumnya
+            </button>
+            <div
+              id="page-numbers"
+              class="flex items-center gap-1 text-xs font-semibold overflow-x-auto"
+            ></div>
+            <button
+              id="btn-next-page"
+              onclick="changePage(1)"
+              class="flex items-center gap-1 px-4 py-2 text-xs font-bold rounded-lg bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Berikutnya <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
         </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <section class="lg:col-span-2 space-y-4">
-                <div class="flex items-center justify-between border-b border-gray-200 dark:border-slate-700 pb-2">
-                    <h3 class="font-bold text-gray-800 dark:text-gray-200" id="feed-title">Daftar Berita</h3>
-                    <span id="result-count" class="text-xs text-gray-500 dark:text-gray-400"></span>
-                </div>
-                
-                <div id="news-feed" class="space-y-4">
-                    <p class="text-gray-400 animate-pulse text-sm">Memuat berita terbaru...</p>
-                </div>
+        <aside class="space-y-6">
+          <!-- [4/5] SLOT IKLAN SIDEBAR 300x250 -->
+          <div
+            class="bg-gray-100 dark:bg-slate-800 min-h-[250px] rounded-xl flex flex-col items-center justify-center border border-gray-200 dark:border-slate-700 p-2 text-center overflow-hidden"
+          >
+            <span class="text-[10px] text-gray-400 mb-2"
+              >SPONSORED CONTENT</span
+            >
+            <div id="ad-slot-sidebar" class="ad-container overflow-hidden">
+              <!-- Tempel Kode Iklan 300x250_1 di Sini -->
+            </div>
+          </div>
 
-                <!-- [3/5] SLOT IKLAN BAWAH -->
-                <div class="mt-6 mb-4 text-center bg-gray-100 dark:bg-slate-800 py-3 rounded-lg border border-dashed border-gray-300 dark:border-slate-700 overflow-hidden w-full">
-                     <span class="text-[10px] text-gray-400 block mb-1">ADVERTISEMENT</span>
-                     <div id="ad-slot-bottom" class="ad-container overflow-hidden w-full">
-                         <script>
-  atOptions = {
-    'key' : '36969eeb9c2e0885de6aaec06d71cdba',
-    'format' : 'iframe',
-    'height' : 250,
-    'width' : 300,
-    'params' : {}
-  };
-</script>
-<script src="https://bauval.org/22/36969eeb9c2e0885de6aaec06d71cdba"></script>
-                     </div>
-                </div>
-
-                <div id="pagination-container" class="hidden flex items-center justify-between border-t border-gray-200 dark:border-slate-700 pt-4 mt-2">
-                    <button id="btn-prev-page" onclick="changePage(-1)" class="flex items-center gap-1 px-4 py-2 text-xs font-bold rounded-lg bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                        <i data-lucide="chevron-left" class="w-4 h-4"></i> Sebelumnya
-                    </button>
-                    <div id="page-numbers" class="flex items-center gap-1 text-xs font-semibold overflow-x-auto"></div>
-                    <button id="btn-next-page" onclick="changePage(1)" class="flex items-center gap-1 px-4 py-2 text-xs font-bold rounded-lg bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                        Berikutnya <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </button>
-                </div>
-            </section>
-
-            <aside class="space-y-6">
-                <!-- [4/5] SLOT IKLAN SIDEBAR 300x250 -->
-                <div class="bg-gray-100 dark:bg-slate-800 min-h-[250px] rounded-xl flex flex-col items-center justify-center border border-gray-200 dark:border-slate-700 p-2 text-center overflow-hidden">
-                    <span class="text-[10px] text-gray-400 mb-2">SPONSORED CONTENT</span>
-                    <div id="ad-slot-sidebar" class="ad-container overflow-hidden">
-                        <!-- Tempel Kode Iklan 300x250_1 di Sini -->
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
-                    <h3 class="font-bold text-base mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                        <i data-lucide="trending-up" class="w-4 h-4 text-amber-500"></i>
-                        Trending Hari Ini
-                    </h3>
-                    <ul id="trending-list" class="space-y-3 text-sm divide-y divide-gray-100 dark:divide-slate-700">
-                        <li class="text-xs text-gray-400 animate-pulse">Memuat trending...</li>
-                    </ul>
-                </div>
-            </aside>
-        </div>
+          <div
+            class="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700"
+          >
+            <h3
+              class="font-bold text-base mb-4 text-gray-900 dark:text-white flex items-center gap-2"
+            >
+              <i data-lucide="trending-up" class="w-4 h-4 text-amber-500"></i>
+              Trending Hari Ini
+            </h3>
+            <ul
+              id="trending-list"
+              class="space-y-3 text-sm divide-y divide-gray-100 dark:divide-slate-700"
+            >
+              <li class="text-xs text-gray-400 animate-pulse">
+                Memuat trending...
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 mt-12 py-6">
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500 dark:text-gray-400 space-y-2">
-            <p>&copy; 2026 <strong>WartaKilat</strong>. Mesin Pencari & Agregator Berita Otomatis.</p>
-        </div>
+    <footer
+      class="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 mt-12 py-6"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500 dark:text-gray-400 space-y-2"
+      >
+        <p>
+          &copy; 2026 <strong>WartaKilat</strong>. Mesin Pencari & Agregator
+          Berita Otomatis.
+        </p>
+      </div>
     </footer>
 
     <!-- WARTAKILAT AI ASSISTANT -->
     <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-        <div id="aiChatWindow" class="hidden w-80 sm:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 mb-4 overflow-hidden transform transition-all">
-            <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-4 flex items-center justify-between">
-                <div class="flex items-center gap-2 text-white">
-                    <i data-lucide="bot" class="w-5 h-5"></i> 
-                    <h3 class="font-bold text-sm">WartaKilat AI</h3>
-                </div>
-                <button onclick="toggleAiChat()" class="text-white hover:text-gray-200">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <div id="aiChatMessages" class="p-4 h-64 overflow-y-auto bg-gray-50 dark:bg-slate-900/50 space-y-3 text-sm chat-container">
-                <div class="flex items-start gap-2">
-                    <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-                        <i data-lucide="bot" class="w-4 h-4 text-amber-600"></i>
-                    </div>
-                    <div class="bg-white dark:bg-slate-700 p-2.5 rounded-lg rounded-tl-none border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-200 shadow-sm">
-                        Halo! Saya asisten WartaKilat. Ada pertanyaan soal berita hari ini?
-                    </div>
-                </div>
-            </div>
-            <div class="p-3 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex gap-2">
-                <input type="text" id="aiChatInput" onkeypress="handleAiKeyPress(event)" placeholder="Tanya sesuatu..." 
-                    class="flex-1 text-sm bg-gray-100 dark:bg-slate-700 border-transparent rounded-lg px-3 py-2 focus:ring-2 focus:ring-amber-500 dark:text-white">
-                <button onclick="sendAiMessage()" class="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-lg transition">
-                    <i data-lucide="send" class="w-4 h-4"></i>
-                </button>
-            </div>
+      <div
+        id="aiChatWindow"
+        class="hidden w-80 sm:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 mb-4 overflow-hidden transform transition-all"
+      >
+        <div
+          class="bg-gradient-to-r from-amber-500 to-amber-600 p-4 flex items-center justify-between"
+        >
+          <div class="flex items-center gap-2 text-white">
+            <i data-lucide="bot" class="w-5 h-5"></i>
+            <h3 class="font-bold text-sm">WartaKilat AI</h3>
+          </div>
+          <button
+            onclick="toggleAiChat()"
+            class="text-white hover:text-gray-200"
+          >
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
         </div>
+        <div
+          id="aiChatMessages"
+          class="p-4 h-64 overflow-y-auto bg-gray-50 dark:bg-slate-900/50 space-y-3 text-sm chat-container"
+        >
+          <div class="flex items-start gap-2">
+            <div
+              class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0"
+            >
+              <i data-lucide="bot" class="w-4 h-4 text-amber-600"></i>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-700 p-2.5 rounded-lg rounded-tl-none border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-200 shadow-sm"
+            >
+              Halo! Saya asisten WartaKilat. Ada pertanyaan soal berita hari
+              ini?
+            </div>
+          </div>
+        </div>
+        <div
+          class="p-3 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex gap-2"
+        >
+          <input
+            type="text"
+            id="aiChatInput"
+            onkeypress="handleAiKeyPress(event)"
+            placeholder="Tanya sesuatu..."
+            class="flex-1 text-sm bg-gray-100 dark:bg-slate-700 border-transparent rounded-lg px-3 py-2 focus:ring-2 focus:ring-amber-500 dark:text-white"
+          />
+          <button
+            onclick="sendAiMessage()"
+            class="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-lg transition"
+          >
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
 
-        <button id="aiBubbleBtn" onclick="toggleAiChat()" class="animate-bounce-short bg-slate-900 dark:bg-amber-500 hover:bg-slate-800 dark:hover:bg-amber-600 text-white p-4 rounded-full shadow-xl flex items-center justify-center transition-transform hover:scale-110">
-            <i data-lucide="bot" class="w-6 h-6"></i>
-        </button>
+      <button
+        id="aiBubbleBtn"
+        onclick="toggleAiChat()"
+        class="animate-bounce-short bg-slate-900 dark:bg-amber-500 hover:bg-slate-800 dark:hover:bg-amber-600 text-white p-4 rounded-full shadow-xl flex items-center justify-center transition-transform hover:scale-110"
+      >
+        <i data-lucide="bot" class="w-6 h-6"></i>
+      </button>
     </div>
 
     <!-- MODAL ABOUT -->
-    <div id="aboutModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-200 dark:border-slate-700 space-y-4 relative">
-             <button onclick="toggleAboutModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-             <h3 class="text-xl font-black text-amber-500">Tentang WartaKilat</h3>
-             <p class="text-sm text-gray-600 dark:text-gray-300">WartaKilat adalah agregator berita pintar 24/7. Seluruh rangkuman disajikan dalam bentuk poin pendek oleh AI.</p>
-             <button onclick="toggleAboutModal()" class="w-full py-2 bg-amber-500 hover:bg-amber-600 font-bold rounded-xl text-sm">Tutup</button>
-        </div>
+    <div
+      id="aboutModal"
+      class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-200 dark:border-slate-700 space-y-4 relative"
+      >
+        <button
+          onclick="toggleAboutModal()"
+          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white"
+        >
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <h3 class="text-xl font-black text-amber-500">Tentang WartaKilat</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          WartaKilat adalah agregator berita pintar 24/7. Seluruh rangkuman
+          disajikan dalam bentuk poin pendek oleh AI.
+        </p>
+        <button
+          onclick="toggleAboutModal()"
+          class="w-full py-2 bg-amber-500 hover:bg-amber-600 font-bold rounded-xl text-sm"
+        >
+          Tutup
+        </button>
+      </div>
     </div>
 
     <!-- MODAL DETAIL BERITA (REDIRECT PAGE) -->
-    <div id="articleModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-slate-700 relative flex flex-col">
-            <!-- Header Modal -->
-            <div class="sticky top-0 bg-white dark:bg-slate-800 p-4 border-b border-gray-200 dark:border-slate-700 flex justify-between items-center z-10">
-                <span id="modalCategoryBadge" class="px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-amber-100 text-amber-800">KATEGORI</span>
-                <button onclick="closeArticleModal()" class="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white bg-gray-100 dark:bg-slate-700 p-1 rounded-full transition">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            
-            <!-- Konten Modal -->
-            <img id="modalImage" src="" class="w-full h-64 object-cover shrink-0" alt="Cover Image">
-            <div class="p-6 space-y-4 flex-1">
-                <h2 id="modalTitle" class="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-tight">Judul Berita</h2>
-                <span id="modalDate" class="text-xs text-gray-500 block">Tanggal Publikasi</span>
-                
-                <div class="bg-amber-50 dark:bg-amber-950/30 border-l-4 border-amber-400 p-4 rounded-r mt-4">
-                    <h4 class="font-black text-amber-900 dark:text-amber-200 mb-2 flex items-center gap-2">
-                        <i data-lucide="zap" class="w-4 h-4 fill-amber-500 text-amber-500"></i> Rangkuman AI Cepat (TL;DR)
-                    </h4>
-                    <ul id="modalTLDR" class="space-y-1.5 text-sm text-gray-800 dark:text-gray-300"></ul>
-                </div>
-                
-                <p id="modalSummary" class="text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed mt-4"></p>
-                
-                <!-- Call to Action Redirect -->
-                <div class="pt-6 border-t border-gray-200 dark:border-slate-700 mt-6 text-center">
-                    <p class="text-xs text-gray-500 mb-3">Ingin membaca detail lengkap dan pernyataan narasumber?</p>
-                    <a id="modalSourceLink" href="#" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-full md:w-auto gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-8 py-3.5 rounded-xl transition shadow-md hover:shadow-lg">
-                        <span>Baca Berita Lengkap di Sumber Asli</span>
-                        <i data-lucide="external-link" class="w-4 h-4"></i>
-                    </a>
-                </div>
-            </div>
+    <div
+      id="articleModal"
+      class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white dark:bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-slate-700 relative flex flex-col"
+      >
+        <!-- Header Modal -->
+        <div
+          class="sticky top-0 bg-white dark:bg-slate-800 p-4 border-b border-gray-200 dark:border-slate-700 flex justify-between items-center z-10"
+        >
+          <span
+            id="modalCategoryBadge"
+            class="px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-amber-100 text-amber-800"
+            >KATEGORI</span
+          >
+          <button
+            onclick="closeArticleModal()"
+            class="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white bg-gray-100 dark:bg-slate-700 p-1 rounded-full transition"
+          >
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
         </div>
+
+        <!-- Konten Modal -->
+        <img
+          id="modalImage"
+          src=""
+          class="w-full h-64 object-cover shrink-0"
+          alt="Cover Image"
+        />
+        <div class="p-6 space-y-4 flex-1">
+          <h2
+            id="modalTitle"
+            class="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-tight"
+          >
+            Judul Berita
+          </h2>
+          <span id="modalDate" class="text-xs text-gray-500 block"
+            >Tanggal Publikasi</span
+          >
+
+          <div
+            class="bg-amber-50 dark:bg-amber-950/30 border-l-4 border-amber-400 p-4 rounded-r mt-4"
+          >
+            <h4
+              class="font-black text-amber-900 dark:text-amber-200 mb-2 flex items-center gap-2"
+            >
+              <i
+                data-lucide="zap"
+                class="w-4 h-4 fill-amber-500 text-amber-500"
+              ></i>
+              Rangkuman AI Cepat (TL;DR)
+            </h4>
+            <ul
+              id="modalTLDR"
+              class="space-y-1.5 text-sm text-gray-800 dark:text-gray-300"
+            ></ul>
+          </div>
+
+          <p
+            id="modalSummary"
+            class="text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed mt-4"
+          ></p>
+
+          <!-- Call to Action Redirect -->
+          <div
+            class="pt-6 border-t border-gray-200 dark:border-slate-700 mt-6 text-center"
+          >
+            <p class="text-xs text-gray-500 mb-3">
+              Ingin membaca detail lengkap dan pernyataan narasumber?
+            </p>
+            <a
+              id="modalSourceLink"
+              href="#"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center justify-center w-full md:w-auto gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-8 py-3.5 rounded-xl transition shadow-md hover:shadow-lg"
+            >
+              <span>Baca Berita Lengkap di Sumber Asli</span>
+              <i data-lucide="external-link" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-           const SUPABASE_URL = "https://dcfkdlqryxupictffswz.supabase.co"; 
-        const SUPABASE_ANON_KEY = "sb_publishable_7g6dywySEVKhhovtn4GlTg_h8RLd3MT";  
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        // Pastikan Anda memperbarui logika Backend Worker agar menangani sapaan pendek.
-        const AI_PROXY_URL = "https://wartakilat-ai-proxy.username.workers.dev"; 
+      const SUPABASE_URL = "https://dcfkdlqryxupictffswz.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_7g6dywySEVKhhovtn4GlTg_h8RLd3MT";
+      const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let currentCategory = 'all';
-        let searchQuery = '';
-        let rawArticles = [];
-        let currentPage = 1;
-        const itemsPerPage = 10; 
-        let aiContextMemory = ""; 
+      // Pastikan Anda memperbarui logika Backend Worker agar menangani sapaan pendek.
+      const AI_PROXY_URL = "https://wartakilat-ai-proxy.username.workers.dev";
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
-            fetchNews();
-            lucide.createIcons();
-            setTimeout(() => { document.getElementById('aiBubbleBtn').classList.remove('animate-bounce-short'); }, 5000);
+      let currentCategory = "all";
+      let searchQuery = "";
+      let rawArticles = [];
+      let currentPage = 1;
+      const itemsPerPage = 10;
+      let aiContextMemory = "";
+
+      document.addEventListener("DOMContentLoaded", () => {
+        initTheme();
+        fetchNews();
+        lucide.createIcons();
+        setTimeout(() => {
+          document
+            .getElementById("aiBubbleBtn")
+            .classList.remove("animate-bounce-short");
+        }, 5000);
+      });
+
+      function initTheme() {
+        if (
+          localStorage.theme === "dark" ||
+          (!("theme" in localStorage) &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          document.documentElement.classList.add("dark");
+          document.getElementById("themeIconSun").classList.remove("hidden");
+          document.getElementById("themeIconMoon").classList.add("hidden");
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.getElementById("themeIconSun").classList.add("hidden");
+          document.getElementById("themeIconMoon").classList.remove("hidden");
+        }
+      }
+
+      function toggleTheme() {
+        if (document.documentElement.classList.contains("dark")) {
+          document.documentElement.classList.remove("dark");
+          localStorage.theme = "light";
+          document.getElementById("themeIconSun").classList.add("hidden");
+          document.getElementById("themeIconMoon").classList.remove("hidden");
+        } else {
+          document.documentElement.classList.add("dark");
+          localStorage.theme = "dark";
+          document.getElementById("themeIconSun").classList.remove("hidden");
+          document.getElementById("themeIconMoon").classList.add("hidden");
+        }
+      }
+
+      function toggleAboutModal() {
+        document.getElementById("aboutModal").classList.toggle("hidden");
+      }
+      function toggleMobileSearch() {
+        document.getElementById("mobileSearchBox").classList.toggle("hidden");
+      }
+
+      async function fetchNews() {
+        const feedContainer = document.getElementById("news-feed");
+        feedContainer.innerHTML = `<p class="text-gray-400 animate-pulse text-sm">Memuat data berita...</p>`;
+
+        const sortOrder =
+          document.getElementById("sortSelect").value === "newest";
+        let query = _supabase
+          .from("articles")
+          .select("*")
+          .order("created_at", { ascending: !sortOrder })
+          .limit(100);
+
+        if (currentCategory !== "all") {
+          query = query.eq("category", currentCategory);
+        }
+        const { data: articles, error } = await query;
+
+        if (error || !articles || articles.length === 0) {
+          feedContainer.innerHTML = `<div class="p-6 text-center text-gray-400 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">Belum ada berita.</div>`;
+          document.getElementById("result-count").innerText = "0 Berita";
+          document
+            .getElementById("pagination-container")
+            .classList.add("hidden");
+          return;
+        }
+
+        rawArticles = articles;
+        currentPage = 1;
+        renderAllSections();
+        buildAiContext(articles.slice(0, 5));
+      }
+
+      function renderAllSections() {
+        const filtered = rawArticles.filter((item) => {
+          if (!searchQuery) return true;
+          const q = searchQuery.toLowerCase();
+          return (
+            item.title.toLowerCase().includes(q) ||
+            item.summary.toLowerCase().includes(q)
+          );
         });
 
-        function initTheme() {
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-                document.getElementById('themeIconSun').classList.remove('hidden');
-                document.getElementById('themeIconMoon').classList.add('hidden');
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.getElementById('themeIconSun').classList.add('hidden');
-                document.getElementById('themeIconMoon').classList.remove('hidden');
-            }
+        document.getElementById("result-count").innerText =
+          `${filtered.length} Berita Ditemukan`;
+        document
+          .querySelectorAll(".dynamic-schema")
+          .forEach((el) => el.remove());
+        let schemaJsonLd = [];
+
+        renderTopNews(filtered, schemaJsonLd);
+        renderFeedWithPagination(filtered, schemaJsonLd);
+        renderTrending(rawArticles);
+
+        if (schemaJsonLd.length > 0) {
+          const schemaScript = document.createElement("script");
+          schemaScript.type = "application/ld+json";
+          schemaScript.className = "dynamic-schema";
+          schemaScript.text = JSON.stringify(schemaJsonLd);
+          document.head.appendChild(schemaScript);
+        }
+      }
+
+      // FUNGSI MEMBUKA MODAL ARTIKEL (REDIRECT PAGE)
+      // FUNGSI MEMBUKA MODAL ARTIKEL (REDIRECT PAGE)
+      function openArticleModal(articleId) {
+        const item = rawArticles.find(
+          (a) => a.id === articleId || a.slug === articleId,
+        );
+        if (!item) return;
+
+        document.getElementById("modalImage").src = item.image_url;
+        document.getElementById("modalTitle").innerText = item.title;
+        document.getElementById("modalDate").innerText = new Date(
+          item.created_at,
+        ).toLocaleDateString("id-ID");
+        document.getElementById("modalSourceLink").href = item.source_url;
+
+        // PERBAIKAN: Membersihkan tag HTML (seperti <img>) dari Ringkasan Berita
+        // Agar hanya Teks Murni yang tampil di modalSummary
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = item.summary;
+        const cleanText = tempDiv.textContent || tempDiv.innerText || "";
+        document.getElementById("modalSummary").innerText = cleanText.trim();
+
+        const badge = document.getElementById("modalCategoryBadge");
+        badge.innerText = item.category;
+        badge.className =
+          item.category === "hukum"
+            ? "px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-red-100 text-red-800"
+            : "px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-green-100 text-green-800";
+
+        const tldrList = document.getElementById("modalTLDR");
+        tldrList.innerHTML = "";
+        if (Array.isArray(item.tldr)) {
+          item.tldr.forEach((pt) => {
+            tldrList.insertAdjacentHTML(
+              "beforeend",
+              `<li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 mt-0.5 text-amber-500 shrink-0"></i> <span>${pt}</span></li>`,
+            );
+          });
         }
 
-        function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.theme = 'light';
-                document.getElementById('themeIconSun').classList.add('hidden');
-                document.getElementById('themeIconMoon').classList.remove('hidden');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.theme = 'dark';
-                document.getElementById('themeIconSun').classList.remove('hidden');
-                document.getElementById('themeIconMoon').classList.add('hidden');
-            }
+        document.getElementById("articleModal").classList.remove("hidden");
+        lucide.createIcons();
+      }
+
+      function closeArticleModal() {
+        document.getElementById("articleModal").classList.add("hidden");
+      }
+
+      function renderTopNews(articles, schemaArray) {
+        const container = document.getElementById("top-news-grid");
+        if (!articles || articles.length === 0) {
+          container.innerHTML = "";
+          return;
         }
+        const topItems = articles.slice(0, 3);
+        let html = "";
+        topItems.forEach((item, idx) => {
+          const badgeColor =
+            item.category === "hukum"
+              ? "bg-red-500 text-white"
+              : "bg-green-500 text-white";
+          const colSpan = idx === 0 ? "md:col-span-2" : "md:col-span-1";
+          schemaArray.push({
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            headline: item.title,
+            url: item.source_url,
+          });
 
-        function toggleAboutModal() { document.getElementById('aboutModal').classList.toggle('hidden'); }
-        function toggleMobileSearch() { document.getElementById('mobileSearchBox').classList.toggle('hidden'); }
-
-        async function fetchNews() {
-            const feedContainer = document.getElementById('news-feed');
-            feedContainer.innerHTML = `<p class="text-gray-400 animate-pulse text-sm">Memuat data berita...</p>`;
-
-            const sortOrder = document.getElementById('sortSelect').value === 'newest';
-            let query = _supabase.from('articles').select('*').order('created_at', { ascending: !sortOrder }).limit(100); 
-
-            if (currentCategory !== 'all') { query = query.eq('category', currentCategory); }
-            const { data: articles, error } = await query;
-
-            if (error || !articles || articles.length === 0) {
-                feedContainer.innerHTML = `<div class="p-6 text-center text-gray-400 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">Belum ada berita.</div>`;
-                document.getElementById('result-count').innerText = '0 Berita';
-                document.getElementById('pagination-container').classList.add('hidden');
-                return;
-            }
-
-            rawArticles = articles;
-            currentPage = 1; 
-            renderAllSections();
-            buildAiContext(articles.slice(0, 5)); 
-        }
-
-        function renderAllSections() {
-            const filtered = rawArticles.filter(item => {
-                if (!searchQuery) return true;
-                const q = searchQuery.toLowerCase();
-                return item.title.toLowerCase().includes(q) || item.summary.toLowerCase().includes(q);
-            });
-
-            document.getElementById('result-count').innerText = `${filtered.length} Berita Ditemukan`;
-            document.querySelectorAll('.dynamic-schema').forEach(el => el.remove());
-            let schemaJsonLd = [];
-
-            renderTopNews(filtered, schemaJsonLd);
-            renderFeedWithPagination(filtered, schemaJsonLd);
-            renderTrending(rawArticles);
-
-            if(schemaJsonLd.length > 0) {
-                const schemaScript = document.createElement('script');
-                schemaScript.type = 'application/ld+json';
-                schemaScript.className = 'dynamic-schema';
-                schemaScript.text = JSON.stringify(schemaJsonLd);
-                document.head.appendChild(schemaScript);
-            }
-        }
-
-        // FUNGSI MEMBUKA MODAL ARTIKEL (REDIRECT PAGE)
-        function openArticleModal(articleId) {
-            const item = rawArticles.find(a => a.id === articleId || a.slug === articleId);
-            if(!item) return;
-
-            document.getElementById('modalImage').src = item.image_url;
-            document.getElementById('modalTitle').innerText = item.title;
-            document.getElementById('modalDate').innerText = new Date(item.created_at).toLocaleDateString('id-ID');
-            document.getElementById('modalSummary').innerText = item.summary;
-            document.getElementById('modalSourceLink').href = item.source_url;
-            
-            const badge = document.getElementById('modalCategoryBadge');
-            badge.innerText = item.category;
-            badge.className = item.category === 'hukum' 
-                ? 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-red-100 text-red-800' 
-                : 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-green-100 text-green-800';
-
-            const tldrList = document.getElementById('modalTLDR');
-            tldrList.innerHTML = '';
-            if (Array.isArray(item.tldr)) {
-                item.tldr.forEach(pt => {
-                    tldrList.insertAdjacentHTML('beforeend', `<li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 mt-0.5 text-amber-500 shrink-0"></i> <span>${pt}</span></li>`);
-                });
-            }
-
-            document.getElementById('articleModal').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function closeArticleModal() {
-            document.getElementById('articleModal').classList.add('hidden');
-        }
-
-        function renderTopNews(articles, schemaArray) {
-            const container = document.getElementById('top-news-grid');
-            if (!articles || articles.length === 0) { container.innerHTML = ''; return; }
-            const topItems = articles.slice(0, 3);
-            let html = '';
-            topItems.forEach((item, idx) => {
-                const badgeColor = item.category === 'hukum' ? 'bg-red-500 text-white' : 'bg-green-500 text-white';
-                const colSpan = (idx === 0) ? 'md:col-span-2' : 'md:col-span-1';
-                schemaArray.push({ "@context": "https://schema.org", "@type": "NewsArticle", "headline": item.title, "url": item.source_url });
-                
-                html += `
+          html += `
                     <!-- Mengubah Link agar membuka Modal bukan langsung Redirect -->
                     <div onclick="openArticleModal('${item.slug || item.id}')" class="relative group rounded-xl overflow-hidden shadow-md h-72 ${colSpan} border border-gray-200 dark:border-slate-700 cursor-pointer">
                         <img src="${item.image_url}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
@@ -451,172 +771,236 @@
                             <h3 class="text-lg font-bold text-white leading-snug hover:underline">${item.title}</h3>
                         </div>
                     </div>`;
-            });
-            container.innerHTML = html;
+        });
+        container.innerHTML = html;
+      }
+
+      function renderFeedWithPagination(articles, schemaArray) {
+        const feedContainer = document.getElementById("news-feed");
+        const paginationContainer = document.getElementById(
+          "pagination-container",
+        );
+        const mainList = articles.slice(3);
+
+        if (mainList.length === 0) {
+          feedContainer.innerHTML = `<p class="text-xs text-gray-400 italic">Menampilkan seluruh berita pilihan di bagian Berita Teratas.</p>`;
+          paginationContainer.classList.add("hidden");
+          return;
         }
 
-        function renderFeedWithPagination(articles, schemaArray) {
-            const feedContainer = document.getElementById('news-feed');
-            const paginationContainer = document.getElementById('pagination-container');
-            const mainList = articles.slice(3); 
-            
-            if (mainList.length === 0) {
-                feedContainer.innerHTML = `<p class="text-xs text-gray-400 italic">Menampilkan seluruh berita pilihan di bagian Berita Teratas.</p>`;
-                paginationContainer.classList.add('hidden'); return;
-            }
+        const totalPages = Math.ceil(mainList.length / itemsPerPage);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageArticles = mainList.slice(startIndex, endIndex);
 
-            const totalPages = Math.ceil(mainList.length / itemsPerPage);
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const pageArticles = mainList.slice(startIndex, endIndex);
+        let html = "";
+        pageArticles.forEach((item, index) => {
+          const badgeBg =
+            item.category === "hukum"
+              ? "bg-red-100 text-red-800"
+              : "bg-green-100 text-green-800";
+          const tldrItems = Array.isArray(item.tldr)
+            ? item.tldr.map((pt) => `<li>• ${pt}</li>`).join("")
+            : "";
+          schemaArray.push({
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            headline: item.title,
+            url: item.source_url,
+          });
 
-            let html = '';
-            pageArticles.forEach((item, index) => {
-                const badgeBg = item.category === 'hukum' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
-                const tldrItems = Array.isArray(item.tldr) ? item.tldr.map(pt => `<li>• ${pt}</li>`).join('') : '';
-                schemaArray.push({ "@context": "https://schema.org", "@type": "NewsArticle", "headline": item.title, "url": item.source_url });
-
-                html += `
+          html += `
                     <article class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden flex flex-col sm:flex-row hover:shadow-md transition">
                         <img src="${item.image_url}" class="w-full sm:w-48 h-48 sm:h-auto object-cover shrink-0 cursor-pointer" loading="lazy" onclick="openArticleModal('${item.slug || item.id}')">
                         <div class="p-5 flex flex-col justify-between flex-1">
                             <div>
                                 <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${badgeBg}">${item.category}</span>
                                 <h3 class="text-base font-bold my-2 cursor-pointer hover:text-amber-500" onclick="openArticleModal('${item.slug || item.id}')">${item.title}</h3>
-                                ${tldrItems ? `<div class="bg-amber-50 dark:bg-amber-950/30 border-l-2 border-amber-400 p-2.5 my-2.5 text-xs text-amber-900 dark:text-amber-200 rounded-r"><ul class="space-y-0.5">${tldrItems}</ul></div>` : ''}
+                                ${tldrItems ? `<div class="bg-amber-50 dark:bg-amber-950/30 border-l-2 border-amber-400 p-2.5 my-2.5 text-xs text-amber-900 dark:text-amber-200 rounded-r"><ul class="space-y-0.5">${tldrItems}</ul></div>` : ""}
                                 <p class="text-gray-600 dark:text-gray-300 text-xs line-clamp-2">${item.summary}</p>
                             </div>
                         </div>
                     </article>`;
-                
-                // [5/5] SLOT IKLAN IN-ARTICLE
-                if(index === 2) {
-                    html += `
+
+          // [5/5] SLOT IKLAN IN-ARTICLE
+          if (index === 2) {
+            html += `
                         <div class="bg-gray-100 dark:bg-slate-800 p-4 border border-dashed border-gray-300 dark:border-slate-600 rounded text-center my-4 overflow-hidden w-full">
                             <span class="text-[10px] text-gray-400 block mb-1">SPONSORED CONTENT</span>
                             <script async="async" data-cfasync="false" src="https://bauval.org/21/e26f2220ef4640261e9bd866a199572b"><\/script>
 <div id="container-e26f2220ef4640261e9bd866a199572b"></div>
                         </div>
                     `;
-                }
-            });
-            
-            feedContainer.innerHTML = html;
-            
-            if (totalPages > 1) {
-                paginationContainer.classList.remove('hidden');
-                document.getElementById('btn-prev-page').disabled = (currentPage === 1);
-                document.getElementById('btn-next-page').disabled = (currentPage === totalPages);
-                let pageNumbersHtml = '';
-                for (let i = 1; i <= totalPages; i++) {
-                    const activeClass = (i === currentPage) ? 'bg-amber-500 text-slate-900 font-bold' : 'bg-white text-gray-600 border border-gray-200';
-                    pageNumbersHtml += `<button onclick="goToPage(${i})" class="w-8 h-8 rounded-lg ${activeClass} transition">${i}</button>`;
-                }
-                document.getElementById('page-numbers').innerHTML = pageNumbersHtml;
-            } else { paginationContainer.classList.add('hidden'); }
-            
-            lucide.createIcons();
+          }
+        });
+
+        feedContainer.innerHTML = html;
+
+        if (totalPages > 1) {
+          paginationContainer.classList.remove("hidden");
+          document.getElementById("btn-prev-page").disabled = currentPage === 1;
+          document.getElementById("btn-next-page").disabled =
+            currentPage === totalPages;
+          let pageNumbersHtml = "";
+          for (let i = 1; i <= totalPages; i++) {
+            const activeClass =
+              i === currentPage
+                ? "bg-amber-500 text-slate-900 font-bold"
+                : "bg-white text-gray-600 border border-gray-200";
+            pageNumbersHtml += `<button onclick="goToPage(${i})" class="w-8 h-8 rounded-lg ${activeClass} transition">${i}</button>`;
+          }
+          document.getElementById("page-numbers").innerHTML = pageNumbersHtml;
+        } else {
+          paginationContainer.classList.add("hidden");
         }
 
-        function changePage(direction) { currentPage += direction; renderAllSections(); window.scrollTo({ top: document.getElementById('top-news-section').offsetTop - 80, behavior: 'smooth' }); }
-        function goToPage(page) { currentPage = page; renderAllSections(); window.scrollTo({ top: document.getElementById('top-news-section').offsetTop - 80, behavior: 'smooth' }); }
-        
-        function renderTrending(articles) {
-            const list = document.getElementById('trending-list');
-            let html = '';
-            articles.slice(0, 5).forEach((item, i) => {
-                html += `<li class="pt-2"><a href="javascript:void(0)" onclick="openArticleModal('${item.slug || item.id}')" class="group flex items-start gap-3"><span class="font-black text-lg text-amber-500 shrink-0">0${i+1}</span><div><h4 class="text-xs font-semibold group-hover:text-amber-500 text-gray-800 dark:text-gray-200 line-clamp-2">${item.title}</h4></div></a></li>`;
-            });
-            list.innerHTML = html;
+        lucide.createIcons();
+      }
+
+      function changePage(direction) {
+        currentPage += direction;
+        renderAllSections();
+        window.scrollTo({
+          top: document.getElementById("top-news-section").offsetTop - 80,
+          behavior: "smooth",
+        });
+      }
+      function goToPage(page) {
+        currentPage = page;
+        renderAllSections();
+        window.scrollTo({
+          top: document.getElementById("top-news-section").offsetTop - 80,
+          behavior: "smooth",
+        });
+      }
+
+      function renderTrending(articles) {
+        const list = document.getElementById("trending-list");
+        let html = "";
+        articles.slice(0, 5).forEach((item, i) => {
+          html += `<li class="pt-2"><a href="javascript:void(0)" onclick="openArticleModal('${item.slug || item.id}')" class="group flex items-start gap-3"><span class="font-black text-lg text-amber-500 shrink-0">0${i + 1}</span><div><h4 class="text-xs font-semibold group-hover:text-amber-500 text-gray-800 dark:text-gray-200 line-clamp-2">${item.title}</h4></div></a></li>`;
+        });
+        list.innerHTML = html;
+      }
+
+      function filterCategory(cat) {
+        currentCategory = cat;
+        document.querySelectorAll(".cat-btn").forEach((btn) => {
+          btn.classList.remove("bg-amber-500", "text-slate-900", "font-bold");
+          btn.classList.add("text-gray-600", "dark:text-gray-300");
+        });
+        const activeBtn = document.getElementById(`btn-cat-${cat}`);
+        if (activeBtn) {
+          activeBtn.classList.add(
+            "bg-amber-500",
+            "text-slate-900",
+            "font-bold",
+          );
+          activeBtn.classList.remove("text-gray-600", "dark:text-gray-300");
         }
+        fetchNews();
+      }
 
-        function filterCategory(cat) {
-            currentCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.remove('bg-amber-500', 'text-slate-900', 'font-bold');
-                btn.classList.add('text-gray-600', 'dark:text-gray-300');
-            });
-            const activeBtn = document.getElementById(`btn-cat-${cat}`);
-            if (activeBtn) {
-                activeBtn.classList.add('bg-amber-500', 'text-slate-900', 'font-bold');
-                activeBtn.classList.remove('text-gray-600', 'dark:text-gray-300');
-            }
-            fetchNews();
+      function handleSearch() {
+        searchQuery = document.getElementById("searchInput").value;
+        currentPage = 1;
+        renderAllSections();
+      }
+      function handleSearchMobile() {
+        searchQuery = document.getElementById("searchInputMobile").value;
+        currentPage = 1;
+        renderAllSections();
+      }
+      function resetFilter() {
+        searchQuery = "";
+        document.getElementById("searchInput").value = "";
+        filterCategory("all");
+      }
+
+      // --- LOGIKA WARTAKILAT AI CHATBOT MELALUI CLOUDFLARE WORKER ---
+
+      function buildAiContext(latestArticles) {
+        aiContextMemory = latestArticles
+          .map((a) => {
+            let tldr = Array.isArray(a.tldr) ? a.tldr.join(", ") : "";
+            return `Judul: ${a.title}. Poin: ${tldr}`;
+          })
+          .join(" | ");
+      }
+
+      function toggleAiChat() {
+        document.getElementById("aiChatWindow").classList.toggle("hidden");
+        document
+          .getElementById("aiBubbleBtn")
+          .classList.remove("animate-bounce-short");
+      }
+
+      function handleAiKeyPress(e) {
+        if (e.key === "Enter") sendAiMessage();
+      }
+
+      async function sendAiMessage() {
+        const inputEl = document.getElementById("aiChatInput");
+        const message = inputEl.value.trim();
+        if (!message) return;
+
+        inputEl.value = "";
+        appendChatMessage(message, "user");
+        const loadingId = appendChatMessage("...", "ai", true);
+
+        try {
+          const response = await fetch(AI_PROXY_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message: message,
+              context: aiContextMemory,
+            }),
+          });
+
+          if (!response.ok) throw new Error("Network response was not ok");
+
+          const data = await response.json();
+          document.getElementById(loadingId).remove();
+
+          if (data.choices && data.choices.length > 0) {
+            appendChatMessage(data.choices[0].message.content, "ai");
+          } else {
+            // Fallback jika response kosong tapi API berhasil di-hit
+            appendChatMessage(
+              "Halo! Ada berita spesifik yang ingin kamu cari hari ini?",
+              "ai",
+            );
+          }
+        } catch (err) {
+          document.getElementById(loadingId).remove();
+          // Error Handling yang lebih halus
+          appendChatMessage(
+            "Koneksi ke server cerdas sedang padat. Silakan coba lagi dalam beberapa detik.",
+            "ai",
+          );
         }
+      }
 
-        function handleSearch() { searchQuery = document.getElementById('searchInput').value; currentPage = 1; renderAllSections(); }
-        function handleSearchMobile() { searchQuery = document.getElementById('searchInputMobile').value; currentPage = 1; renderAllSections(); }
-        function resetFilter() { searchQuery = ''; document.getElementById('searchInput').value = ''; filterCategory('all'); }
-        
-        // --- LOGIKA WARTAKILAT AI CHATBOT MELALUI CLOUDFLARE WORKER ---
-        
-        function buildAiContext(latestArticles) {
-            aiContextMemory = latestArticles.map(a => {
-                let tldr = Array.isArray(a.tldr) ? a.tldr.join(", ") : "";
-                return `Judul: ${a.title}. Poin: ${tldr}`;
-            }).join(" | ");
-        }
-
-        function toggleAiChat() { 
-            document.getElementById('aiChatWindow').classList.toggle('hidden'); 
-            document.getElementById('aiBubbleBtn').classList.remove('animate-bounce-short'); 
-        }
-        
-        function handleAiKeyPress(e) { if (e.key === 'Enter') sendAiMessage(); }
-        
-        async function sendAiMessage() {
-            const inputEl = document.getElementById('aiChatInput');
-            const message = inputEl.value.trim();
-            if (!message) return;
-
-            inputEl.value = '';
-            appendChatMessage(message, 'user');
-            const loadingId = appendChatMessage("...", 'ai', true);
-
-            try {
-                const response = await fetch(AI_PROXY_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message: message, context: aiContextMemory })
-                });
-
-                if (!response.ok) throw new Error("Network response was not ok");
-                
-                const data = await response.json();
-                document.getElementById(loadingId).remove();
-                
-                if (data.choices && data.choices.length > 0) {
-                    appendChatMessage(data.choices[0].message.content, 'ai');
-                } else {
-                    // Fallback jika response kosong tapi API berhasil di-hit
-                    appendChatMessage("Halo! Ada berita spesifik yang ingin kamu cari hari ini?", 'ai');
-                }
-            } catch (err) {
-                document.getElementById(loadingId).remove();
-                // Error Handling yang lebih halus
-                appendChatMessage("Koneksi ke server cerdas sedang padat. Silakan coba lagi dalam beberapa detik.", 'ai');
-            }
-        }
-
-        function appendChatMessage(text, sender, isLoading = false) {
-            const box = document.getElementById('aiChatMessages');
-            const id = 'msg-' + Date.now();
-            let html = '';
-            if (sender === 'user') {
-                html = `<div class="flex justify-end gap-2"><div class="bg-amber-500 p-2.5 rounded-lg rounded-tr-none text-white shadow-sm">${text}</div></div>`;
-            } else {
-                html = `<div id="${id}" class="flex items-start gap-2 ${isLoading ? 'animate-pulse' : ''}">
+      function appendChatMessage(text, sender, isLoading = false) {
+        const box = document.getElementById("aiChatMessages");
+        const id = "msg-" + Date.now();
+        let html = "";
+        if (sender === "user") {
+          html = `<div class="flex justify-end gap-2"><div class="bg-amber-500 p-2.5 rounded-lg rounded-tr-none text-white shadow-sm">${text}</div></div>`;
+        } else {
+          html = `<div id="${id}" class="flex items-start gap-2 ${isLoading ? "animate-pulse" : ""}">
                     <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
                         <i data-lucide="bot" class="w-4 h-4 text-amber-600"></i>
                     </div>
                     <div class="bg-white dark:bg-slate-700 p-2.5 rounded-lg rounded-tl-none border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-200 shadow-sm">${text}</div>
                 </div>`;
-            }
-            box.insertAdjacentHTML('beforeend', html);
-            box.scrollTop = box.scrollHeight;
-            lucide.createIcons();
-            return id;
         }
+        box.insertAdjacentHTML("beforeend", html);
+        box.scrollTop = box.scrollHeight;
+        lucide.createIcons();
+        return id;
+      }
     </script>
-</body>
+  </body>
 </html>
