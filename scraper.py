@@ -3,19 +3,22 @@ import re
 import time
 import json
 import feedparser
-import requests
+from datetime import datetime, timedelta
 from supabase import create_client, Client
 from groq import Groq
 
-# 1. Inisialisasi Environment Variables
+# Inisialisasi Environment Variables
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
+if not all([SUPABASE_URL, SUPABASE_KEY, GROQ_API_KEY]):
+    raise ValueError("Environment variables SUPABASE_URL, SUPABASE_KEY, atau GROQ_API_KEY belum terkonfigurasi!")
+
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 groq_client = Groq(api_key=GROQ_API_KEY)
 
-# Konfigurasi RSS Target (Dapat Anda tambah/sesuaikan kapan saja)
+# Konfigurasi RSS Feeds per Kategori
 RSS_FEEDS = {
     'hukum': [
         'https://www.antaranews.com/rss/hukum.xml',
@@ -26,6 +29,18 @@ RSS_FEEDS = {
         'https://rss.tempo.co/olahraga'
     ]
 }
+
+def delete_old_articles(days_limit=30):
+    """
+    Menghapus artikel yang berumur lebih dari 'days_limit' hari dari Supabase
+    untuk menghemat ruang penyimpanan.
+    """
+    cutoff_date = (datetime.now() - timedelta(days=days_limit)).isoformat()
+    try:
+        response = supabase.table("articles").delete().lt("created_at", cutoff_date).execute()
+        print(f"[Cleanup DB] Berhasil membersihkan artikel yang dibuat sebelum {cutoff_date}")
+    except Exception as e:
+        print(f"[Cleanup DB Error] Gagal menghapus artikel lama: {e}")
 
 def generate_slug(text):
     text = re.sub(r'[^\w\s-]', '', text.lower())
@@ -42,7 +57,7 @@ def process_with_groq(title, original_summary):
 
     Tolong hasilkan output JSON persis dalam format berikut (tanpa markdown atau teks tambahan):
     {{
-        "click_title": "Judul berita yang sangat memancing rasa penasaran (click-worthy) namun akurat",
+        "click_title": "Judul berita yang sangat memancing rasa penasaran namun akurat",
         "ai_summary": "Ringkasan berita 2 paragraf pendek dalam bahasa kasual-profesional",
         "tldr": [
             "Poin penting 1 dalam 10 kata",
@@ -59,10 +74,9 @@ def process_with_groq(title, original_summary):
             temperature=0.7,
             max_tokens=600
         )
-        res = json.loads(completion.choices[0].message.content)
-        return res
+        return json.loads(completion.choices[0].message.content)
     except Exception as e:
-        print(f"[Warning] Groq API Limit/Error: {e}. Fallback ke data asli.")
+        print(f"[Warning] Groq API Limit/Error: {e}. Menggunakan fallback data asli.")
         return {
             "click_title": title,
             "ai_summary": original_summary,
@@ -70,7 +84,10 @@ def process_with_groq(title, original_summary):
         }
 
 def run_scraper():
-    MAX_ARTICLES_PER_CATEGORY = 3 # Pembatasan kuota Groq API per eksekusi
+    # 1. Jalankan pembersihan database terlebih dahulu
+    delete_old_articles(days_limit=30)
+    
+    MAX_ARTICLES_PER_CATEGORY = 3 
     
     for category, urls in RSS_FEEDS.items():
         print(f"--- Memproses Kategori: {category} ---")
@@ -87,7 +104,7 @@ def run_scraper():
                     
                 source_url = entry.link
                 
-                # Cek apakah artikel sudah ada di database (Direct Fix: Prevent Duplicates)
+                # Cek duplikasi URL sumber untuk mencegah error duplicate content
                 check_existing = supabase.table("articles").select("id").eq("source_url", source_url).execute()
                 if check_existing.data:
                     print(f"[Skip] Artikel sudah ada: {source_url}")
@@ -96,19 +113,15 @@ def run_scraper():
                 raw_title = entry.title
                 raw_summary = getattr(entry, 'summary', raw_title)
                 
-                # Cari Gambar dari Enclosure atau Media Content
-                image_url = ""
+                # Ekstraksi Gambar
+                image_url = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=600"
                 if 'media_content' in entry:
                     image_url = entry.media_content[0]['url']
                 elif 'enclosures' in entry and len(entry.enclosures) > 0:
                     image_url = entry.enclosures[0].href
-                else:
-                    image_url = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=600" # Fallback image
                 
                 # AI Rewrite via Groq
                 ai_data = process_with_groq(raw_title, raw_summary)
-                
-                # Delay 2 detik untuk rate limiting
                 time.sleep(2)
                 
                 payload = {
@@ -117,12 +130,11 @@ def run_scraper():
                     "summary": ai_data.get("ai_summary", raw_summary),
                     "tldr": ai_data.get("tldr", []),
                     "content": raw_summary,
-                    "source_url": source_url,
+                    "source_url": source_url, # Diset UNIQUE di database
                     "image_url": image_url,
                     "category": category
                 }
                 
-                # Insert ke Supabase
                 try:
                     supabase.table("articles").insert(payload).execute()
                     print(f"[Success] Tersimpan: {payload['title']}")
