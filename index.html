@@ -24,15 +24,18 @@
     
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
         body { transition: background-color 0.3s ease, color 0.3s ease; }
         .chat-container { scrollbar-width: thin; }
+        /* Memastikan gambar banner iklan tidak melebihi lebar layar di mobile */
+        .ad-container img, .ad-container iframe { max-width: 100% !important; overflow: hidden; }
     </style>
 
-    <!-- [1/5] SLOT IKLAN POPUNDER (Disisipkan di Head) -->
+    <!-- [1/5] SLOT -->
     <script data-cfasync="false" src="https://abscloud.org/1/5d2c3a1a77837b656311e2f6ece5c69c"></script>
 </head>
 <body class="bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-gray-100 min-h-screen flex flex-col">
@@ -40,6 +43,7 @@
     <!-- HEADER / NAVIGATION BAR -->
     <header class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-gray-200 dark:border-slate-700 sticky top-0 z-40 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+            
             <div class="flex items-center gap-3">
                 <a href="#" onclick="resetFilter()" class="flex items-center gap-2 text-2xl font-black tracking-wider text-amber-500 dark:text-amber-400">
                     <i data-lucide="zap" class="w-7 h-7 fill-amber-500 text-amber-500"></i>
@@ -49,7 +53,7 @@
 
             <div class="flex-1 max-w-md hidden sm:block relative">
                 <div class="relative">
-                    <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Cari berita hangat, hukum, olahraga..." 
+                    <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Cari berita hangat..." 
                         class="w-full pl-10 pr-4 py-2 text-sm bg-gray-100 dark:bg-slate-700 border border-transparent dark:border-slate-600 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-900 dark:text-white placeholder-gray-400">
                     <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-gray-400"></i>
                 </div>
@@ -84,7 +88,6 @@
                     <button onclick="filterCategory('all')" id="btn-cat-all" class="cat-btn active px-3.5 py-1 rounded-full bg-amber-500 text-slate-900 font-bold">Semua Berita</button>
                     <button onclick="filterCategory('hukum')" id="btn-cat-hukum" class="cat-btn px-3.5 py-1 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700">⚖️ Hukum & Politik</button>
                     <button onclick="filterCategory('olahraga')" id="btn-cat-olahraga" class="cat-btn px-3.5 py-1 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700">⚽ Olahraga</button>
-                    <button onclick="filterCategory('teknologi')" id="btn-cat-teknologi" class="cat-btn px-3.5 py-1 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700">💻 Teknologi</button>
                 </div>
                 <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                     <span>Urutkan:</span>
@@ -97,12 +100,15 @@
         </div>
     </header>
 
-    <!-- [2/5] SLOT IKLAN BANNER ATAS 728x90 -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 text-center">
+    <!-- [2/5]  -->
+    <!-- Kontainer Iklan ini dirancang agar tidak merusak lebar halaman di Mobile -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 text-center overflow-hidden w-full">
         <div class="bg-gray-200 dark:bg-slate-800 border border-dashed border-gray-400 dark:border-slate-600 py-4 rounded-md">
-            <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">SPONSORED ADVERTISEMENT</span>
-            <div id="ad-slot-header" class="ad-container">
-                <script>
+            <span class="text-[10px] text-gray-500 dark:text-gray-400 block mb-1">SPONSORED ADVERTISEMENT</span>
+            <div id="ad-slot-header" class="ad-container flex justify-center w-full overflow-hidden">
+                <!-- Tampilkan 728x90 HANYA di Desktop/Tablet -->
+                <div class="hidden md:block w-full max-w-[728px] overflow-hidden">
+                    <script>
   atOptions = {
     'key' : '7072be28562e0b9fbe5a61cdaca00395',
     'format' : 'iframe',
@@ -112,6 +118,20 @@
   };
 </script>
 <script src="https://bauval.org/22/7072be28562e0b9fbe5a61cdaca00395"></script>
+                </div>
+                <!-- Tampilkan Iklan Ukuran Kecil (300x250 atau 320x50) HANYA di Mobile (Opsional) -->
+                <div class="block md:hidden w-full overflow-hidden">
+                    <script>
+  atOptions = {
+    'key' : '36969eeb9c2e0885de6aaec06d71cdba',
+    'format' : 'iframe',
+    'height' : 250,
+    'width' : 300,
+    'params' : {}
+  };
+</script>
+<script src="https://bauval.org/22/36969eeb9c2e0885de6aaec06d71cdba"></script>
+                </div>
             </div>
         </div>
     </div>
@@ -139,32 +159,11 @@
                     <p class="text-gray-400 animate-pulse text-sm">Memuat berita terbaru...</p>
                 </div>
 
-                <!-- [3/5] SLOT IKLAN BAWAH (Native / Banner Tambahan) -->
-                <div class="mt-6 mb-4 text-center bg-gray-100 dark:bg-slate-800 py-3 rounded-lg border border-dashed border-gray-300 dark:border-slate-700">
+                <!-- [3/5] SLOT IKLAN BAWAH -->
+                <div class="mt-6 mb-4 text-center bg-gray-100 dark:bg-slate-800 py-3 rounded-lg border border-dashed border-gray-300 dark:border-slate-700 overflow-hidden w-full">
                      <span class="text-[10px] text-gray-400 block mb-1">ADVERTISEMENT</span>
-                     <div id="ad-slot-bottom">
-                         <script async="async" data-cfasync="false" src="https://bauval.org/21/e26f2220ef4640261e9bd866a199572b"></script>
-<div id="container-e26f2220ef4640261e9bd866a199572b"></div>
-                     </div>
-                </div>
-
-                <div id="pagination-container" class="hidden flex items-center justify-between border-t border-gray-200 dark:border-slate-700 pt-4 mt-2">
-                    <button id="btn-prev-page" onclick="changePage(-1)" class="flex items-center gap-1 px-4 py-2 text-xs font-bold rounded-lg bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                        <i data-lucide="chevron-left" class="w-4 h-4"></i> Sebelumnya
-                    </button>
-                    <div id="page-numbers" class="flex items-center gap-1 text-xs font-semibold"></div>
-                    <button id="btn-next-page" onclick="changePage(1)" class="flex items-center gap-1 px-4 py-2 text-xs font-bold rounded-lg bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                        Berikutnya <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </button>
-                </div>
-            </section>
-
-            <aside class="space-y-6">
-                <!-- [4/5] SLOT IKLAN SIDEBAR KANAN 300x250 -->
-                <div class="bg-gray-100 dark:bg-slate-800 min-h-[250px] rounded-xl flex flex-col items-center justify-center border border-gray-200 dark:border-slate-700 p-2 text-center">
-                    <span class="text-[10px] text-gray-400 mb-2">SPONSORED CONTENT</span>
-                    <div id="ad-slot-sidebar">
-                        <script>
+                     <div id="ad-slot-bottom" class="ad-container overflow-hidden w-full">
+                         <script>
   atOptions = {
     'key' : '36969eeb9c2e0885de6aaec06d71cdba',
     'format' : 'iframe',
@@ -174,6 +173,26 @@
   };
 </script>
 <script src="https://bauval.org/22/36969eeb9c2e0885de6aaec06d71cdba"></script>
+                     </div>
+                </div>
+
+                <div id="pagination-container" class="hidden flex items-center justify-between border-t border-gray-200 dark:border-slate-700 pt-4 mt-2">
+                    <button id="btn-prev-page" onclick="changePage(-1)" class="flex items-center gap-1 px-4 py-2 text-xs font-bold rounded-lg bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i> Sebelumnya
+                    </button>
+                    <div id="page-numbers" class="flex items-center gap-1 text-xs font-semibold overflow-x-auto"></div>
+                    <button id="btn-next-page" onclick="changePage(1)" class="flex items-center gap-1 px-4 py-2 text-xs font-bold rounded-lg bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                        Berikutnya <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </section>
+
+            <aside class="space-y-6">
+                <!-- [4/5] SLOT IKLAN SIDEBAR 300x250 -->
+                <div class="bg-gray-100 dark:bg-slate-800 min-h-[250px] rounded-xl flex flex-col items-center justify-center border border-gray-200 dark:border-slate-700 p-2 text-center overflow-hidden">
+                    <span class="text-[10px] text-gray-400 mb-2">SPONSORED CONTENT</span>
+                    <div id="ad-slot-sidebar" class="ad-container overflow-hidden">
+                        <!-- Tempel Kode Iklan 300x250_1 di Sini -->
                     </div>
                 </div>
 
@@ -197,7 +216,7 @@
         </div>
     </footer>
 
-    <!-- WARTAKILAT AI ASSISTANT (FLOATING BUBBLE) -->
+    <!-- WARTAKILAT AI ASSISTANT -->
     <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
         <div id="aiChatWindow" class="hidden w-80 sm:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 mb-4 overflow-hidden transform transition-all">
             <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-4 flex items-center justify-between">
@@ -243,21 +262,57 @@
         </div>
     </div>
 
+    <!-- MODAL DETAIL BERITA (REDIRECT PAGE) -->
+    <div id="articleModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-slate-700 relative flex flex-col">
+            <!-- Header Modal -->
+            <div class="sticky top-0 bg-white dark:bg-slate-800 p-4 border-b border-gray-200 dark:border-slate-700 flex justify-between items-center z-10">
+                <span id="modalCategoryBadge" class="px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-amber-100 text-amber-800">KATEGORI</span>
+                <button onclick="closeArticleModal()" class="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white bg-gray-100 dark:bg-slate-700 p-1 rounded-full transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <!-- Konten Modal -->
+            <img id="modalImage" src="" class="w-full h-64 object-cover shrink-0" alt="Cover Image">
+            <div class="p-6 space-y-4 flex-1">
+                <h2 id="modalTitle" class="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-tight">Judul Berita</h2>
+                <span id="modalDate" class="text-xs text-gray-500 block">Tanggal Publikasi</span>
+                
+                <div class="bg-amber-50 dark:bg-amber-950/30 border-l-4 border-amber-400 p-4 rounded-r mt-4">
+                    <h4 class="font-black text-amber-900 dark:text-amber-200 mb-2 flex items-center gap-2">
+                        <i data-lucide="zap" class="w-4 h-4 fill-amber-500 text-amber-500"></i> Rangkuman AI Cepat (TL;DR)
+                    </h4>
+                    <ul id="modalTLDR" class="space-y-1.5 text-sm text-gray-800 dark:text-gray-300"></ul>
+                </div>
+                
+                <p id="modalSummary" class="text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed mt-4"></p>
+                
+                <!-- Call to Action Redirect -->
+                <div class="pt-6 border-t border-gray-200 dark:border-slate-700 mt-6 text-center">
+                    <p class="text-xs text-gray-500 mb-3">Ingin membaca detail lengkap dan pernyataan narasumber?</p>
+                    <a id="modalSourceLink" href="#" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-full md:w-auto gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-8 py-3.5 rounded-xl transition shadow-md hover:shadow-lg">
+                        <span>Baca Berita Lengkap di Sumber Asli</span>
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-         const SUPABASE_URL = "https://dcfkdlqryxupictffswz.supabase.co"; 
-        const SUPABASE_ANON_KEY = "sb_publishable_7g6dywySEVKhhovtn4GlTg_h8RLd3MT";           
+           const SUPABASE_URL = "https://dcfkdlqryxupictffswz.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_7g6dywySEVKhhovtn4GlTg_h8RLd3MT";  
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // Ganti URL ini dengan URL Cloudflare Worker Anda[cite: 1, 2]
-        const AI_PROXY_URL = "https://wartakilat-ai-proxy.p658672001.workers.dev/"; 
+        // Pastikan Anda memperbarui logika Backend Worker agar menangani sapaan pendek.
+        const AI_PROXY_URL = "https://wartakilat-ai-proxy.username.workers.dev"; 
 
         let currentCategory = 'all';
         let searchQuery = '';
         let rawArticles = [];
-        
         let currentPage = 1;
         const itemsPerPage = 10; 
-        
         let aiContextMemory = ""; 
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -343,23 +398,57 @@
             }
         }
 
+        // FUNGSI MEMBUKA MODAL ARTIKEL (REDIRECT PAGE)
+        function openArticleModal(articleId) {
+            const item = rawArticles.find(a => a.id === articleId || a.slug === articleId);
+            if(!item) return;
+
+            document.getElementById('modalImage').src = item.image_url;
+            document.getElementById('modalTitle').innerText = item.title;
+            document.getElementById('modalDate').innerText = new Date(item.created_at).toLocaleDateString('id-ID');
+            document.getElementById('modalSummary').innerText = item.summary;
+            document.getElementById('modalSourceLink').href = item.source_url;
+            
+            const badge = document.getElementById('modalCategoryBadge');
+            badge.innerText = item.category;
+            badge.className = item.category === 'hukum' 
+                ? 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-red-100 text-red-800' 
+                : 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-green-100 text-green-800';
+
+            const tldrList = document.getElementById('modalTLDR');
+            tldrList.innerHTML = '';
+            if (Array.isArray(item.tldr)) {
+                item.tldr.forEach(pt => {
+                    tldrList.insertAdjacentHTML('beforeend', `<li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 mt-0.5 text-amber-500 shrink-0"></i> <span>${pt}</span></li>`);
+                });
+            }
+
+            document.getElementById('articleModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeArticleModal() {
+            document.getElementById('articleModal').classList.add('hidden');
+        }
+
         function renderTopNews(articles, schemaArray) {
             const container = document.getElementById('top-news-grid');
             if (!articles || articles.length === 0) { container.innerHTML = ''; return; }
             const topItems = articles.slice(0, 3);
             let html = '';
             topItems.forEach((item, idx) => {
-                const badgeColor = item.category === 'hukum' ? 'bg-red-500 text-white' : item.category === 'olahraga' ? 'bg-green-500 text-white' : 'bg-blue-500 text-white';
+                const badgeColor = item.category === 'hukum' ? 'bg-red-500 text-white' : 'bg-green-500 text-white';
                 const colSpan = (idx === 0) ? 'md:col-span-2' : 'md:col-span-1';
                 schemaArray.push({ "@context": "https://schema.org", "@type": "NewsArticle", "headline": item.title, "url": item.source_url });
                 
                 html += `
-                    <div class="relative group rounded-xl overflow-hidden shadow-md h-72 ${colSpan} border border-gray-200 dark:border-slate-700 cursor-pointer">
+                    <!-- Mengubah Link agar membuka Modal bukan langsung Redirect -->
+                    <div onclick="openArticleModal('${item.slug || item.id}')" class="relative group rounded-xl overflow-hidden shadow-md h-72 ${colSpan} border border-gray-200 dark:border-slate-700 cursor-pointer">
                         <img src="${item.image_url}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent"></div>
                         <div class="absolute bottom-0 p-5 space-y-2">
                             <span class="px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide ${badgeColor}">${item.category}</span>
-                            <h3 class="text-lg font-bold text-white leading-snug"><a href="${item.source_url}" target="_blank" class="hover:underline">${item.title}</a></h3>
+                            <h3 class="text-lg font-bold text-white leading-snug hover:underline">${item.title}</h3>
                         </div>
                     </div>`;
             });
@@ -383,29 +472,30 @@
 
             let html = '';
             pageArticles.forEach((item, index) => {
-                const badgeBg = item.category === 'hukum' ? 'bg-red-100 text-red-800' : item.category === 'olahraga' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800';
+                const badgeBg = item.category === 'hukum' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
                 const tldrItems = Array.isArray(item.tldr) ? item.tldr.map(pt => `<li>• ${pt}</li>`).join('') : '';
                 schemaArray.push({ "@context": "https://schema.org", "@type": "NewsArticle", "headline": item.title, "url": item.source_url });
 
                 html += `
                     <article class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden flex flex-col sm:flex-row hover:shadow-md transition">
-                        <img src="${item.image_url}" class="w-full sm:w-48 h-48 sm:h-auto object-cover shrink-0" loading="lazy">
+                        <img src="${item.image_url}" class="w-full sm:w-48 h-48 sm:h-auto object-cover shrink-0 cursor-pointer" loading="lazy" onclick="openArticleModal('${item.slug || item.id}')">
                         <div class="p-5 flex flex-col justify-between flex-1">
                             <div>
                                 <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${badgeBg}">${item.category}</span>
-                                <h3 class="text-base font-bold my-2"><a href="${item.source_url}" target="_blank" class="hover:text-amber-500">${item.title}</a></h3>
+                                <h3 class="text-base font-bold my-2 cursor-pointer hover:text-amber-500" onclick="openArticleModal('${item.slug || item.id}')">${item.title}</h3>
                                 ${tldrItems ? `<div class="bg-amber-50 dark:bg-amber-950/30 border-l-2 border-amber-400 p-2.5 my-2.5 text-xs text-amber-900 dark:text-amber-200 rounded-r"><ul class="space-y-0.5">${tldrItems}</ul></div>` : ''}
                                 <p class="text-gray-600 dark:text-gray-300 text-xs line-clamp-2">${item.summary}</p>
                             </div>
                         </div>
                     </article>`;
                 
-                // [5/5] SLOT IKLAN IN-ARTICLE (NativeBanner_1) Disisipkan di Antara Berita Feed
+                // [5/5] SLOT IKLAN IN-ARTICLE
                 if(index === 2) {
                     html += `
-                        <div class="bg-gray-100 dark:bg-slate-800 p-4 border border-dashed border-gray-300 dark:border-slate-600 rounded text-center my-4">
+                        <div class="bg-gray-100 dark:bg-slate-800 p-4 border border-dashed border-gray-300 dark:border-slate-600 rounded text-center my-4 overflow-hidden w-full">
                             <span class="text-[10px] text-gray-400 block mb-1">SPONSORED CONTENT</span>
-                            <div class="text-xs text-gray-400">Konten sponsor</div>
+                            <script async="async" data-cfasync="false" src="https://bauval.org/21/e26f2220ef4640261e9bd866a199572b"><\/script>
+<div id="container-e26f2220ef4640261e9bd866a199572b"></div>
                         </div>
                     `;
                 }
@@ -435,7 +525,7 @@
             const list = document.getElementById('trending-list');
             let html = '';
             articles.slice(0, 5).forEach((item, i) => {
-                html += `<li class="pt-2"><a href="${item.source_url}" target="_blank" class="group flex items-start gap-3"><span class="font-black text-lg text-amber-500 shrink-0">0${i+1}</span><div><h4 class="text-xs font-semibold group-hover:text-amber-500 text-gray-800 dark:text-gray-200 line-clamp-2">${item.title}</h4></div></a></li>`;
+                html += `<li class="pt-2"><a href="javascript:void(0)" onclick="openArticleModal('${item.slug || item.id}')" class="group flex items-start gap-3"><span class="font-black text-lg text-amber-500 shrink-0">0${i+1}</span><div><h4 class="text-xs font-semibold group-hover:text-amber-500 text-gray-800 dark:text-gray-200 line-clamp-2">${item.title}</h4></div></a></li>`;
             });
             list.innerHTML = html;
         }
@@ -484,24 +574,27 @@
             const loadingId = appendChatMessage("...", 'ai', true);
 
             try {
-                // Memanggil Backend Proxy Cloudflare Worker untuk keamanan API Key[cite: 1, 2]
                 const response = await fetch(AI_PROXY_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ message: message, context: aiContextMemory })
                 });
 
+                if (!response.ok) throw new Error("Network response was not ok");
+                
                 const data = await response.json();
                 document.getElementById(loadingId).remove();
                 
                 if (data.choices && data.choices.length > 0) {
                     appendChatMessage(data.choices[0].message.content, 'ai');
                 } else {
-                    appendChatMessage("Maaf, terjadi gangguan pada sistem cerdas saya.", 'ai');
+                    // Fallback jika response kosong tapi API berhasil di-hit
+                    appendChatMessage("Halo! Ada berita spesifik yang ingin kamu cari hari ini?", 'ai');
                 }
             } catch (err) {
                 document.getElementById(loadingId).remove();
-                appendChatMessage("Koneksi ke server AI terputus.", 'ai');
+                // Error Handling yang lebih halus
+                appendChatMessage("Koneksi ke server cerdas sedang padat. Silakan coba lagi dalam beberapa detik.", 'ai');
             }
         }
 
