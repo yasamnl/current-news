@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WartaKilat - Media Berita Hukum & Olahraga Terkini</title>
     
-    <!-- DIRECT FIX 1: Bypass Proteksi Hotlinking Gambar Sumber -->
+    <!-- DIRECT FIX 1: Bypass Proteksi Hotlinking Gambar dari Situs Sumber -->
     <meta name="referrer" content="no-referrer">
     
     <!-- Google Fonts: Inter & Plus Jakarta Sans -->
@@ -44,8 +44,8 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
-    
-    <!-- DIRECT FIX 2: Tambahkan atribut defer agar skrip iklan tidak merusak DOM (Cannot read properties of null) -->
+
+    <!-- SCRIPT IKLAN POPUNDER (Diberi atribut defer agar DOM selesai di-render lebih dulu) -->
     <script defer data-cfasync="false" src="https://abscloud.org/1/5d2c3a1a77837b656311e2f6ece5c69c"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen selection:bg-amber-500 selection:text-slate-950">
@@ -64,7 +64,7 @@
             
             <!-- MENU NAVIGASI KATEGORI -->
             <nav class="flex items-center gap-2 text-sm font-semibold">
-                <button onclick="filterCategory('all')" id="btn-all" class="px-3.5 py-1.5 rounded-lg bg-amber-400/10 text-amber-400 border border-amber-400/30 transition-all font-bold">
+                <button onclick="filterCategory('all')" id="btn-all" class="px-3.5 py-1.5 rounded-lg bg-amber-400/10 text-amber-400 border border-amber-400/30 transition-all">
                     🌐 Utama
                 </button>
                 <button onclick="filterCategory('hukum')" id="btn-hukum" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all">
@@ -77,7 +77,7 @@
         </div>
     </header>
 
-    <!-- BANNER SPONSOR / IKLAN ATAS -->
+    <!-- BANNER SPONSOR / IKLAN ATAS (728x90) -->
     <div class="max-w-6xl mx-auto px-4 mt-6">
         <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden border border-slate-800">
             <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-2">SPONSORED ADVERTISEMENT</span>
@@ -110,7 +110,7 @@
 
         <!-- SIDEBAR (1 Kolom) -->
         <aside class="space-y-6">
-            <!-- WIDGET IKLAN SIDEBAR -->
+            <!-- WIDGET IKLAN SIDEBAR (300x250) -->
             <div class="glass-card rounded-2xl p-5 border border-slate-800">
                 <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-3">ADVERTISEMENT</span>
                 <div id="ad-slot-sidebar" class="min-h-[250px] bg-slate-900/50 rounded-xl flex items-center justify-center text-xs text-slate-600 border border-slate-800/80">
@@ -133,7 +133,7 @@
                     <span class="text-amber-400">📡</span> Sumber Feed Resmi
                 </h3>
                 <p class="text-xs text-slate-400 leading-relaxed mb-4">
-                    Seluruh berita di agregasi secara otomatis dari kanal RSS resmi penyedia media nasional:
+                    Seluruh berita diagregasi secara otomatis dari kanal RSS resmi media nasional:
                 </p>
                 <ul class="space-y-2 text-xs font-medium">
                     <li class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
@@ -160,13 +160,11 @@
 
     <!-- FRONTEND LOGIC & SUPABASE INTEGRATION -->
     <script>
-        // =========================================================================
-        // DIRECT FIX 3: Masukkan Kredensial Asli Supabase Langsung (Tanpa process.env)
-        // Ganti string di bawah ini dengan Project URL & Publishable/Anon Key Anda
-        // =========================================================================
+        // DIRECT FIX: Ganti string di bawah ini dengan kredensial ASLI dari Dashboard Supabase Anda
+        // (Jangan gunakan process.env di file HTML statis agar browser tidak error)
         const SUPABASE_URL = "https://dcfkdlqryxupictffswz.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_7g6dywySEVKhhovtn4GlTg_h8RLd3MT"; 
-
+        
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentCategory = 'all';
@@ -191,8 +189,8 @@
             if (error || !articles || articles.length === 0) {
                 feedContainer.innerHTML = `
                     <div class="glass-card rounded-2xl p-8 text-center border-rose-500/20">
-                        <p class="text-rose-400 font-medium">Belum ada berita yang tersedia saat ini.</p>
-                        <p class="text-xs text-slate-500 mt-2">Pastikan URL/Publishable Key Supabase di index.html sudah diisi dengan benar dan GitHub Actions Scraper sudah pernah berjalan minimal 1 kali.</p>
+                        <p class="text-rose-400 font-medium">Belum ada berita yang tersedia.</p>
+                        <p class="text-xs text-slate-500 mt-2">Pastikan URL/Key Supabase sudah diisi dengan benar dan scraper GitHub Actions telah berjalan.</p>
                     </div>
                 `;
                 return;
@@ -218,7 +216,6 @@
 
                 const cardHTML = `
                     <article class="glass-card rounded-2xl overflow-hidden hover:border-slate-700 transition-all duration-300 group">
-                        <!-- THUMBNAIL GAMBAR -->
                         <div class="relative overflow-hidden h-60 bg-slate-900">
                             <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
@@ -227,7 +224,6 @@
                             </div>
                         </div>
 
-                        <!-- KONTEN BERITA -->
                         <div class="p-6">
                             <h2 class="text-xl font-bold font-heading mb-3 text-white leading-snug group-hover:text-amber-400 transition-colors">
                                 <a href="${item.source_url}" target="_blank" rel="noopener">
@@ -235,7 +231,6 @@
                                 </a>
                             </h2>
                             
-                            <!-- BOX TL;DR 30 DETIK (AI SUMMARY) -->
                             ${tldrItems ? `
                             <div class="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 my-4 text-xs text-amber-200/90">
                                 <p class="font-bold text-amber-400 mb-2 flex items-center gap-1.5 uppercase tracking-wider">
@@ -250,7 +245,6 @@
                                 ${item.summary}
                             </p>
                             
-                            <!-- FOOTER KARTU -->
                             <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-800/80">
                                 <span class="flex items-center gap-1">
                                     🕒 ${new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
@@ -268,7 +262,7 @@
                 
                 feedContainer.insertAdjacentHTML('beforeend', cardHTML);
 
-                // INJEKSI IKLAN MID-FEED (Setiap setelah berita ke-2)
+                // INJEKSI IKLAN MID-FEED (Setelah Artikel Ke-2)
                 if (index === 1) {
                     const adInFeed = `
                         <div class="glass-card rounded-2xl p-4 text-center my-6 border border-slate-800">
