@@ -272,8 +272,31 @@
                                 <div id="container-e26f2220ef4640261e9bd866a199572b"></div>
                             </div>
                         </div>
-                    `;
-                    S
+                    feedContainer.insertAdjacentHTML('beforeend', cardHTML);
+
+                    // INJEKSI IKLAN DI TENGAH FEED (SETELAH BERITA KE-2)
+                    if (index === 1) {
+                        // 1. Sisipkan Container HTML Iklan (Tanpa tag <script> di dalamnya)
+                        const adInFeedHTML = `
+                            <div class="glass-card rounded-2xl p-4 text-center my-6 border border-slate-800">
+                                <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-2">SPONSORED CONTENT</span>
+                                <div id="ad-slot-midfeed" class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
+                                    <div id="container-e26f2220ef4640261e9bd866a199572b"></div>
+                                </div>
+                            </div>
+                        `;
+                        feedContainer.insertAdjacentHTML('beforeend', adInFeedHTML);
+                    
+                        // 2. Buat dan Jalankan Skrip Iklan Secara Dinamis via JavaScript
+                        const adSlotContainer = document.getElementById('ad-slot-midfeed');
+                        if (adSlotContainer) {
+                            const adScript = document.createElement('script');
+                            adScript.async = true;
+                            adScript.setAttribute('data-cfasync', 'false');
+                            adScript.src = 'https://bauval.org/21/e26f2220ef4640261e9bd866a199572b';
+                            adSlotContainer.appendChild(adScript);
+                        }
+                    }
     </script>
 </body>
 </html>
