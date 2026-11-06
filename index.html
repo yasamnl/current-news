@@ -158,9 +158,10 @@
 
     <!-- FRONTEND LOGIC & SUPABASE INTEGRATION -->
     <script>
-        // KONEKSI DB: Mengambil nilai variabel dari GitHub Secrets / Environment Variables
-        const SUPABASE_URL = process.env.SUPABASE_URL || "https://xxxx.supabase.co"; 
-        const SUPABASE_ANON_KEY = process.env.SUPABASE_KEY || "PASTE_PUBLISHABLE_KEY_DI_SINI"; 
+        // PERBAIKAN: Masukkan langsung String Project URL dan Publishable Key Supabase Anda di sini
+        const SUPABASE_URL = "https://p658672001.supabase.co"; // Ganti dengan URL Supabase Anda
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // Ganti dengan Publishable Key (Anon Key) Anda
+        
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentCategory = 'all';
@@ -195,18 +196,15 @@
             feedContainer.innerHTML = '';
             
             articles.forEach((item, index) => {
-                // Styling Kategori Dinamis
                 const isHukum = item.category === 'hukum';
                 const categoryBadge = isHukum 
                     ? `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">⚖️ Hukum</span>`
                     : `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">⚽ Olahraga</span>`;
                 
-                // Format TL;DR (3 Poin Ringkasan AI)
                 const tldrItems = Array.isArray(item.tldr) 
                     ? item.tldr.map(pt => `<li class="flex items-start gap-2"><span class="text-amber-400 font-bold">•</span> <span>${pt}</span></li>`).join('') 
                     : '';
 
-                // Ekstraksi Domain Sumber Berita untuk Tampilan Link
                 let domainName = "Situs Sumber";
                 try {
                     const parsedUrl = new URL(item.source_url);
@@ -215,7 +213,6 @@
 
                 const cardHTML = `
                     <article class="glass-card rounded-2xl overflow-hidden hover:border-slate-700 transition-all duration-300 group">
-                        <!-- THUMBNAIL GAMBAR -->
                         <div class="relative overflow-hidden h-60 bg-slate-900">
                             <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
@@ -224,7 +221,6 @@
                             </div>
                         </div>
 
-                        <!-- KONTEN BERITA -->
                         <div class="p-6">
                             <h2 class="text-xl font-bold font-heading mb-3 text-white leading-snug group-hover:text-amber-400 transition-colors">
                                 <a href="${item.source_url}" target="_blank" rel="noopener">
@@ -232,7 +228,6 @@
                                 </a>
                             </h2>
                             
-                            <!-- BOX TL;DR 30 DETIK (GROQ AI SUMMARY) -->
                             ${tldrItems ? `
                             <div class="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 my-4 text-xs text-amber-200/90">
                                 <p class="font-bold text-amber-400 mb-2 flex items-center gap-1.5 uppercase tracking-wider">
@@ -247,13 +242,11 @@
                                 ${item.summary}
                             </p>
                             
-                            <!-- FOOTER KARTU & LINK KE INTERNET -->
                             <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-800/80">
                                 <span class="flex items-center gap-1">
                                     🕒 ${new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                                 </span>
                                 
-                                <!-- LINK TOMBOL SUMBER BERITA ASLI -->
                                 <a href="${item.source_url}" target="_blank" rel="noopener" 
                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-amber-300 font-semibold transition-colors border border-slate-700">
                                     <span>Sumber: ${domainName}</span>
@@ -265,31 +258,12 @@
                 `;
                 
                 feedContainer.insertAdjacentHTML('beforeend', cardHTML);
-
-                // INJEKSI IKLAN DI TENGAH FEED (SETELAH BERITA KE-2)
-                if (index === 1) {
-                    const adInFeed = `
-                        <div class="glass-card rounded-2xl p-4 text-center my-6 border border-slate-800">
-                            <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-2">SPONSORED CONTENT</span>
-                            <div id="ad-slot-midfeed" class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
-                                <div id="container-e26f2220ef4640261e9bd866a199572b"></div>
-                            </div>
-                        </div>
-                    `;
-                    feedContainer.insertAdjacentHTML('beforeend', adInFeed);
-                    const adScript = document.createElement('script');
-                    adScript.async = true;
-                    adScript.dataset.cfasync = 'false';
-                    adScript.src = 'https://bauval.org/21/e26f2220ef4640261e9bd866a199572b';
-                    document.getElementById('ad-slot-midfeed').appendChild(adScript);
-                }
             });
         }
 
         function filterCategory(cat) {
             currentCategory = cat;
             
-            // Update Active Tab UI
             ['all', 'hukum', 'olahraga'].forEach(c => {
                 const btn = document.getElementById(`btn-${c}`);
                 if (c === cat) {
