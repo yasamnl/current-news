@@ -27,6 +27,9 @@ RSS_FEEDS = {
     'olahraga': [
         'https://www.antaranews.com/rss/olahraga.xml',
         'https://rss.tempo.co/olahraga'
+    ],
+    'trending': [
+        'https://trends.google.com/trending/rss?geo=ID'  # Google Trends RSS untuk wilayah Indonesia (ID)
     ]
 }
 
