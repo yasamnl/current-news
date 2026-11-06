@@ -1,317 +1,147 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WartaKilat - Media Berita Hukum & Olahraga Terkini</title>
+    <title>WartaKilat - Pencari Berita & Rangkuman AI</title>
     
-    <!-- DIRECT FIX: Bypass Proteksi Hotlinking Gambar dari Situs Sumber -->
+    <!-- Mencegah gambar rusak akibat proteksi hotlink dari situs sumber[cite: 2] -->
     <meta name="referrer" content="no-referrer">
     
-    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        heading: ['Plus Jakarta Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <style>
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-nav {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-    </style>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen selection:bg-amber-500 selection:text-slate-950">
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
 
-    <!-- HEADER / NAVIGATION BAR (Glassmorphism) -->
-    <header class="glass-nav sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-3.5 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center font-black font-heading text-slate-950 text-xl shadow-lg shadow-amber-500/20">
-                    W
-                </div>
-                <h1 class="text-2xl font-extrabold font-heading tracking-tight text-white">
-                    WARTA<span class="text-amber-400">KILAT</span>
-                </h1>
-            </div>
-            
-            <!-- MENU NAVIGASI KATEGORI -->
-            <nav class="flex items-center gap-2 text-sm font-semibold">
-                <button onclick="filterCategory('all')" id="btn-all" class="px-3.5 py-1.5 rounded-lg bg-amber-400/10 text-amber-400 border border-amber-400/30 transition-all">
-                    🌐 Utama
-                </button>
-                <button onclick="filterCategory('hukum')" id="btn-hukum" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all">
-                    ⚖️ Hukum
-                </button>
-                <button onclick="filterCategory('olahraga')" id="btn-olahraga" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all">
-                    ⚽ Olahraga
-                </button>
+    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <h1 class="text-2xl font-black text-amber-500 flex items-center gap-2">
+                <i data-lucide="zap" class="w-6 h-6"></i> WARTA<span class="text-white">KILAT</span>
+            </h1>
+            <nav class="flex gap-4 text-sm font-semibold">
+                <button onclick="filterCategory('all')" class="text-amber-400">Semua</button>
+                <button onclick="filterCategory('hukum')" class="hover:text-amber-400">Hukum</button>
+                <button onclick="filterCategory('olahraga')" class="hover:text-amber-400">Olahraga</button>
             </nav>
         </div>
     </header>
 
-    <!-- BANNER SPONSOR / IKLAN ATAS (728x90) -->
-    <div class="max-w-6xl mx-auto px-4 mt-6">
-        <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden border border-slate-800">
-            <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-2">SPONSORED ADVERTISEMENT</span>
-            <div id="ad-slot-header" class="min-h-[90px] flex items-center justify-center text-slate-600 text-xs">
-                <script>
-                  atOptions = {
-                    'key' : '7072be28562e0b9fbe5a61cdaca00395',
-                    'format' : 'iframe',
-                    'height' : 90,
-                    'width' : 728,
-                    'params' : {}
-                  };
-                </script>
-                <script src="https://bauval.org/22/7072be28562e0b9fbe5a61cdaca00395"></script>
+    <!-- Slot Iklan Banner Atas (Adsterra / Monetag / AdSense)[cite: 2] -->
+    <div class="max-w-6xl mx-auto px-4 my-4 text-center">
+        <div class="bg-gray-200 border border-dashed border-gray-400 py-4 rounded-md">
+            <span class="text-xs text-gray-500 block mb-1">SPONSORED ADVERTISEMENT</span>
+            <div id="ad-slot-header" class="ad-container">
+                <!-- Tempel script iklan Anda di sini[cite: 2] -->
             </div>
         </div>
     </div>
 
-    <!-- MAIN LAYOUT GRID -->
-    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <main class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 gap-8 flex-1">
         
-        <!-- FEED BERITA UTAMA (2 Kolom) -->
-        <section class="lg:col-span-2 space-y-6" id="news-feed">
-            <!-- Loading Indicator -->
-            <div class="glass-card rounded-2xl p-8 text-center animate-pulse">
-                <div class="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p class="text-slate-400 font-medium">Memuat berita terbaru & terpercaya...</p>
+        <section class="md:col-span-2 space-y-6">
+            <div class="flex items-center justify-between border-b border-gray-200 pb-2">
+                <h2 class="text-lg font-bold">Hasil Pencarian Berita</h2>
+                <span id="result-count" class="text-xs text-gray-500"></span>
+            </div>
+            
+            <div id="news-feed" class="space-y-6">
+                <p class="text-gray-400 animate-pulse text-sm">Memuat berita terkini...</p>
             </div>
         </section>
 
-        <!-- SIDEBAR (1 Kolom) -->
         <aside class="space-y-6">
-            <!-- WIDGET IKLAN SIDEBAR (300x250) -->
-            <div class="glass-card rounded-2xl p-5 border border-slate-800">
-                <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-3">ADVERTISEMENT</span>
-                <div id="ad-slot-sidebar" class="min-h-[250px] bg-slate-900/50 rounded-xl flex items-center justify-center text-xs text-slate-600 border border-slate-800/80">
-                    <script>
-                      atOptions = {
-                        'key' : '36969eeb9c2e0885de6aaec06d71cdba',
-                        'format' : 'iframe',
-                        'height' : 250,
-                        'width' : 300,
-                        'params' : {}
-                      };
-                    </script>
-                    <script src="https://bauval.org/22/36969eeb9c2e0885de6aaec06d71cdba"></script>
-                </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                <h3 class="font-bold mb-2">Informasi Sistem</h3>
+                <p class="text-xs text-gray-600 mb-3">WartaKilat adalah mesin agregator. Berita dirangkum menggunakan AI untuk mempercepat waktu baca Anda. Untuk detail lengkap, silakan kunjungi situs sumber resmi.</p>
             </div>
-
-            <!-- INFOS / KREDIT SUMBER BERITA -->
-            <div class="glass-card rounded-2xl p-5 border border-slate-800">
-                <h3 class="font-heading font-bold text-base text-white mb-3 flex items-center gap-2">
-                    <span class="text-amber-400">📡</span> Sumber Feed Resmi
-                </h3>
-                <p class="text-xs text-slate-400 leading-relaxed mb-4">
-                    Seluruh berita di-agregasi secara otomatis dari kanal RSS resmi penyedia media nasional:
-                </p>
-                <ul class="space-y-2 text-xs font-medium">
-                    <li class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
-                        <span class="text-slate-300">Antara News (Hukum & Olahraga)</span>
-                        <a href="https://www.antaranews.com" target="_blank" rel="noopener" class="text-amber-400 hover:underline">Web ↗</a>
-                    </li>
-                    <li class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800">
-                        <span class="text-slate-300">Tempo.co (Hukum & Olahraga)</span>
-                        <a href="https://www.tempo.co" target="_blank" rel="noopener" class="text-amber-400 hover:underline">Web ↗</a>
-                    </li>
-                </ul>
+            
+            <!-- Slot Iklan Sidebar Native[cite: 2] -->
+            <div class="bg-gray-100 min-h-[250px] rounded-xl flex items-center justify-center border border-gray-200">
+                <span class="text-xs text-gray-400">[Slot Iklan Sidebar]</span>
             </div>
         </aside>
-
     </main>
 
-    <!-- FOOTER MODAL & INFO -->
-    <footer class="border-t border-slate-800/80 mt-12 py-8 bg-slate-950 text-center text-xs text-slate-500">
-        <div class="max-w-6xl mx-auto px-4">
-            <p class="mb-2">© 2026 <strong class="text-slate-400">WartaKilat Digital Media</strong>. Otomatisasi Berita Berbasis Jamstack.</p>
-            <p>Konten dirangkum secara otomatis. Hak cipta berita sepenuhnya milik masing-masing media penerbit.</p>
-        </div>
-    </footer>
-
-    <!-- FRONTEND LOGIC & SUPABASE INTEGRATION -->
     <script>
-        // KREDENSIAL SUPABASE ASLI (DIRECT FIX)
-        const SUPABASE_URL = "https://dcfkdlqryxupictffswz.supabase.co"; 
-        const SUPABASE_ANON_KEY = "sb_publishable_7g6dywySEVKhhovtn4GlTg_h8RLd3MT"; 
-        
-        // Inisialisasi Supabase Client
+        const SUPABASE_URL = "https://PROJECT_ID.supabase.co"; // Ganti dengan URL Anda
+        const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";           // Ganti dengan API Key Anda
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentCategory = 'all';
 
         async function fetchNews() {
             const feedContainer = document.getElementById('news-feed');
-            feedContainer.innerHTML = `
-                <div class="glass-card rounded-2xl p-8 text-center animate-pulse">
-                    <div class="w-10 h-10 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p class="text-slate-400 font-medium">Menghubungkan ke Supabase & memuat berita...</p>
-                </div>
-            `;
+            feedContainer.innerHTML = `<p class="text-gray-400 animate-pulse text-sm">Memuat data berita...</p>`;
 
             let query = _supabase.from('articles').select('*').order('created_at', { ascending: false }).limit(20);
-            
             if (currentCategory !== 'all') {
                 query = query.eq('category', currentCategory);
             }
 
             const { data: articles, error } = await query;
 
-            if (error || !articles || articles.length === 0) {
-                feedContainer.innerHTML = `
-                    <div class="glass-card rounded-2xl p-8 text-center border-rose-500/20">
-                        <p class="text-rose-400 font-medium">Belum ada berita yang tersedia.</p>
-                        <p class="text-xs text-slate-500 mt-2">Pastikan GitHub Actions Scraper Anda sudah dieksekusi setidaknya 1 kali dan berhasil memasukkan data ke tabel 'articles'.</p>
-                    </div>
-                `;
+            if (error || !articles.length) {
+                feedContainer.innerHTML = `<div class="p-6 text-center text-gray-400 bg-white rounded-xl border border-gray-200">Belum ada berita.</div>`;
                 return;
             }
 
-            feedContainer.innerHTML = '';
-            
+            document.getElementById('result-count').innerText = `${articles.length} Berita Ditemukan`;
+            let html = '';
+
             articles.forEach((item, index) => {
-                // Styling Kategori Dinamis
-                const isHukum = item.category === 'hukum';
-                const categoryBadge = isHukum 
-                    ? `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">⚖️ Hukum</span>`
-                    : `<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">⚽ Olahraga</span>`;
-                
-                // Format TL;DR (3 Poin Ringkasan AI)
-                const tldrItems = Array.isArray(item.tldr) 
-                    ? item.tldr.map(pt => `<li class="flex items-start gap-2"><span class="text-amber-400 font-bold">•</span> <span>${pt}</span></li>`).join('') 
-                    : '';
+                const badgeColor = item.category === 'hukum' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
+                const tldrItems = Array.isArray(item.tldr) ? item.tldr.map(pt => `<li>• ${pt}</li>`).join('') : '';
 
-                // Ekstraksi Domain Sumber Berita untuk Tampilan Link
-                let domainName = "Situs Sumber";
-                try {
-                    const parsedUrl = new URL(item.source_url);
-                    domainName = parsedUrl.hostname.replace('www.', '');
-                } catch(e) {}
+                html += `
+                    <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col sm:flex-row">
+                        <img src="${item.image_url}" alt="${item.title}" class="w-full sm:w-48 h-48 sm:h-auto object-cover shrink-0" loading="lazy">
+                        <div class="p-5 flex flex-col justify-between flex-1">
+                            <div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${badgeColor} mb-2 inline-block">${item.category}</span>
+                                <h3 class="text-base font-bold mb-2 leading-snug">
+                                    <a href="${item.source_url}" target="_blank" rel="noopener" class="hover:text-amber-500">${item.title}</a>
+                                </h3>
 
-                const cardHTML = `
-                    <article class="glass-card rounded-2xl overflow-hidden hover:border-slate-700 transition-all duration-300 group">
-                        <!-- THUMBNAIL GAMBAR -->
-                        <div class="relative overflow-hidden h-60 bg-slate-900">
-                            <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
-                            <div class="absolute bottom-4 left-4">
-                                ${categoryBadge}
+                                <div class="bg-amber-50 border-l-2 border-amber-400 p-2.5 my-2.5 text-xs text-amber-900 rounded-r">
+                                    <p class="font-bold mb-1 flex items-center gap-1"><i data-lucide="zap" class="w-3 h-3 text-amber-500"></i> Rangkuman 30 Detik:</p>
+                                    <ul class="space-y-0.5">${tldrItems}</ul>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- KONTEN BERITA -->
-                        <div class="p-6">
-                            <h2 class="text-xl font-bold font-heading mb-3 text-white leading-snug group-hover:text-amber-400 transition-colors">
-                                <a href="${item.source_url}" target="_blank" rel="noopener">
-                                    ${item.title}
-                                </a>
-                            </h2>
-                            
-                            <!-- BOX TL;DR 30 DETIK (GROQ AI SUMMARY) -->
-                            ${tldrItems ? `
-                            <div class="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 my-4 text-xs text-amber-200/90">
-                                <p class="font-bold text-amber-400 mb-2 flex items-center gap-1.5 uppercase tracking-wider">
-                                    <span>⚡</span> Rangkuman 30 Detik (TL;DR):
-                                </p>
-                                <ul class="space-y-1.5 text-slate-300 font-normal leading-relaxed">
-                                    ${tldrItems}
-                                </ul>
-                            </div>` : ''}
-
-                            <p class="text-slate-400 text-sm mb-5 leading-relaxed line-clamp-3">
-                                ${item.summary}
-                            </p>
-                            
-                            <!-- FOOTER KARTU & LINK KE INTERNET -->
-                            <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-800/80">
-                                <span class="flex items-center gap-1">
-                                    🕒 ${new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                </span>
-                                
-                                <!-- LINK TOMBOL SUMBER BERITA ASLI -->
-                                <a href="${item.source_url}" target="_blank" rel="noopener" 
-                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-amber-300 font-semibold transition-colors border border-slate-700">
-                                    <span>Sumber: ${domainName}</span>
-                                    <span class="text-xs">↗</span>
+                            <div class="flex justify-end pt-3 mt-3 border-t border-gray-100">
+                                <a href="${item.source_url}" target="_blank" rel="noopener" class="text-xs font-bold text-amber-600 hover:underline flex items-center gap-1">
+                                    Baca Selengkapnya di Sumber Asli <i data-lucide="external-link" class="w-3 h-3"></i>
                                 </a>
                             </div>
                         </div>
                     </article>
                 `;
-                
-                feedContainer.insertAdjacentHTML('beforeend', cardHTML);
 
-                // INJEKSI IKLAN MID-FEED AMAN (Terisi dinamis lewat JS agar tidak bocor kode skrip di FE)
+                // Injeksi iklan di tengah artikel (Mid-Feed)[cite: 2]
                 if (index === 1) {
-                    const adInFeedHTML = `
-                        <div class="glass-card rounded-2xl p-4 text-center my-6 border border-slate-800">
-                            <span class="text-[10px] uppercase font-bold tracking-widest text-slate-500 block mb-2">SPONSORED CONTENT</span>
-                            <div id="ad-slot-midfeed" class="min-h-[100px] flex items-center justify-center text-xs text-slate-600">
-                                <div id="container-e26f2220ef4640261e9bd866a199572b"></div>
-                            </div>
+                    html += `
+                        <div class="bg-gray-100 p-4 border border-dashed border-gray-300 rounded text-center my-4 ad-slot">
+                            <span class="text-xs text-gray-400 block mb-1">SPONSORED CONTENT</span>
+                            <!-- Tempel script iklan tengah feed Anda di sini[cite: 2] -->
                         </div>
                     `;
-                    feedContainer.insertAdjacentHTML('beforeend', adInFeedHTML);
-
-                    // Buat elemen script iklan secara dinamis lewat JS DOM
-                    const adSlotContainer = document.getElementById('ad-slot-midfeed');
-                    if (adSlotContainer) {
-                        const adScript = document.createElement('script');
-                        adScript.async = true;
-                        adScript.setAttribute('data-cfasync', 'false');
-                        adScript.src = 'https://bauval.org/21/e26f2220ef4640261e9bd866a199572b';
-                        adSlotContainer.appendChild(adScript);
-                    }
                 }
             });
+
+            feedContainer.innerHTML = html;
+            lucide.createIcons();
         }
 
         function filterCategory(cat) {
             currentCategory = cat;
-            
-            // Update Active Tab UI
-            ['all', 'hukum', 'olahraga'].forEach(c => {
-                const btn = document.getElementById(`btn-${c}`);
-                if (c === cat) {
-                    btn.className = "px-3.5 py-1.5 rounded-lg bg-amber-400/10 text-amber-400 border border-amber-400/30 transition-all font-bold";
-                } else {
-                    btn.className = "px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all";
-                }
-            });
-
             fetchNews();
         }
 
-        document.addEventListener("DOMContentLoaded", fetchNews);
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchNews();
+            lucide.createIcons();
+        });
     </script>
-
-    <!-- SCRIPT POPUNDER IKLAN (Ditaruh di bagian paling bawah agar tidak menyebabkan error appendChild) -->
-    <script data-cfasync="false" src="https://abscloud.org/1/5d2c3a1a77837b656311e2f6ece5c69c"></script>
 </body>
 </html>
