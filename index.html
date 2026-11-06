@@ -107,8 +107,7 @@
             <span class="text-[10px] text-gray-500 dark:text-gray-400 block mb-1">SPONSORED ADVERTISEMENT</span>
             <div id="ad-slot-header" class="ad-container flex justify-center w-full overflow-hidden">
                 <div class="hidden md:block w-full max-w-[728px] overflow-hidden">
-                    <div class="hidden md:block w-full max-w-[728px] overflow-hidden">
-            <script>
+                     <script>
               atOptions = {
                 key: "7072be28562e0b9fbe5a61cdaca00395",
                 format: "iframe",
@@ -118,7 +117,6 @@
               };
             </script>
             <script src="https://bauval.org/22/7072be28562e0b9fbe5a61cdaca00395"></script>
-          </div>
                 </div>
                 <div class="block md:hidden w-full overflow-hidden">
                     <!-- Tempel Kode Iklan Ukuran Mobile di Sini -->
@@ -154,7 +152,7 @@
                 <div class="mt-6 mb-4 text-center bg-gray-100 dark:bg-slate-800 py-3 rounded-lg border border-dashed border-gray-300 dark:border-slate-700 overflow-hidden w-full">
                      <span class="text-[10px] text-gray-400 block mb-1">ADVERTISEMENT</span>
                      <div id="ad-slot-bottom" class="ad-container overflow-hidden w-full">
-              <script>
+                         <script>
                 atOptions = {
                   key: "36969eeb9c2e0885de6aaec06d71cdba",
                   format: "iframe",
@@ -164,11 +162,10 @@
                 };
               </script>
               <script src="https://bauval.org/22/36969eeb9c2e0885de6aaec06d71cdba"></script>
-            </div>
                      </div>
                 </div>
 
-                <!-- PAGINASI 10 KONTEN PER HALAMAN -->
+                <!-- PAGINASI 10 KONTEN PER HALAMAN[cite: 1, 2] -->
                 <div id="pagination-container" class="hidden flex items-center justify-between border-t border-gray-200 dark:border-slate-700 pt-4 mt-2">
                     <button id="btn-prev-page" onclick="changePage(-1)" class="flex items-center gap-1 px-4 py-2 text-xs font-bold rounded-lg bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
                         <i data-lucide="chevron-left" class="w-4 h-4"></i> Sebelumnya
@@ -185,7 +182,16 @@
                 <div class="bg-gray-100 dark:bg-slate-800 min-h-[250px] rounded-xl flex flex-col items-center justify-center border border-gray-200 dark:border-slate-700 p-2 text-center overflow-hidden">
                     <span class="text-[10px] text-gray-400 mb-2">SPONSORED CONTENT</span>
                     <div id="ad-slot-sidebar" class="ad-container overflow-hidden">
-                        <!-- Tempel Kode Iklan 300x250_1 di Sini -->
+                        <script>
+  atOptions = {
+    'key' : '36969eeb9c2e0885de6aaec06d71cdba',
+    'format' : 'iframe',
+    'height' : 250,
+    'width' : 300,
+    'params' : {}
+  };
+</script>
+<script src="https://bauval.org/22/36969eeb9c2e0885de6aaec06d71cdba"></script>
                     </div>
                 </div>
 
@@ -280,9 +286,8 @@
                 <p id="modalSummary" class="text-gray-700 dark:text-gray-300 text-sm md:text-base leading-relaxed mt-4"></p>
                 
                 <div class="pt-6 border-t border-gray-200 dark:border-slate-700 mt-6 text-center">
-                    <p class="text-xs text-gray-500 mb-3">Ingin membaca detail lengkap dan pernyataan narasumber?</p>
-                    <a id="modalSourceLink" href="#" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-full md:w-auto gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-8 py-3.5 rounded-xl transition shadow-md hover:shadow-lg">
-                        <span>Baca Berita Lengkap di Sumber Asli</span>
+                     <a id="modalSourceLink" href="#" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-full md:w-auto gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-8 py-3.5 rounded-xl transition shadow-md hover:shadow-lg">
+                        <span>Baca Berita Lengkap</span>
                         <i data-lucide="external-link" class="w-4 h-4"></i>
                     </a>
                 </div>
@@ -292,7 +297,7 @@
 
     <script>
         const SUPABASE_URL = "https://dcfkdlqryxupictffswz.supabase.co";
-      const SUPABASE_ANON_KEY ="sb_publishable_7g6dywySEVKhhovtn4GlTg_h8RLd3MT";          
+      const SUPABASE_ANON_KEY = "sb_publishable_7g6dywySEVKhhovtn4GlTg_h8RLd3MT";          
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         const AI_PROXY_URL = "https://wartakilat-ai-proxy.p658672001.workers.dev"; 
@@ -387,35 +392,49 @@
             }
         }
 
-        // FUNGSI MODAL DETAIL BERITA
+        // FUNGSI MODAL DETAIL BERITA (Diperbaiki agar aman mencocokkan ID/Slug)
+        // FUNGSI MODAL DETAIL BERITA (Diperbaiki agar konten bersih dari tag HTML)
         function openArticleModal(articleId) {
-            const item = rawArticles.find(a => a.id == articleId || a.slug === articleId);
-            if(!item) return;
+            const item = rawArticles.find(a => String(a.id) === String(articleId) || String(a.slug) === String(articleId));
+            if(!item) {
+                console.warn("Artikel tidak ditemukan untuk ID/Slug:", articleId);
+                return;
+            }
 
-            document.getElementById('modalImage').src = item.image_url;
-            document.getElementById('modalTitleជន').innerText = item.title;
-            document.getElementById('modalTitle').innerText = item.title;
-            document.getElementById('modalDate').innerText = new Date(item.created_at).toLocaleDateString('id-ID');
-            document.getElementById('modalSummary').innerText = item.summary;
-            document.getElementById('modalSourceLink').href = item.source_url;
+            document.getElementById('modalImage').src = item.image_url || '';
+            document.getElementById('modalTitle').innerText = item.title || '';
+            document.getElementById('modalDate').innerText = item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID', {dateStyle: 'long'}) : '';
+            
+            // Membersihkan tag HTML (seperti <img ... />) dan hanya mengambil teks murninya saja
+            let cleanSummary = item.summary || '';
+            if (cleanSummary) {
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = cleanSummary;
+                cleanSummary = tempDiv.textContent || tempDiv.innerText || "";
+            }
+            document.getElementById('modalSummary').innerText = cleanSummary;
+            
+            document.getElementById('modalSourceLink').href = item.source_url || '#';
             
             const badge = document.getElementById('modalCategoryBadge');
-            badge.innerText = item.category;
+            badge.innerText = item.category || 'Berita';
             badge.className = item.category === 'hukum' 
-                ? 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-red-100 text-red-800' 
-                : 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-green-100 text-green-800';
+                ? 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200' 
+                : 'px-2.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200';
 
             const tldrList = document.getElementById('modalTLDR');
             tldrList.innerHTML = '';
-            if (Array.isArray(item.tldr)) {
+            if (Array.isArray(item.tldr) && item.tldr.length > 0) {
                 item.tldr.forEach(pt => {
                     tldrList.insertAdjacentHTML('beforeend', `<li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 mt-0.5 text-amber-500 shrink-0"></i> <span>${pt}</span></li>`);
                 });
+            } else {
+                tldrList.innerHTML = `<li>• ${cleanSummary || 'Tidak ada ringkasan poin.'}</li>`;
             }
 
             document.getElementById('articleModal').classList.remove('hidden');
             lucide.createIcons();
-        }
+        }   
 
         function closeArticleModal() {
             document.getElementById('articleModal').classList.add('hidden');
@@ -431,8 +450,9 @@
                 const colSpan = (idx === 0) ? 'md:col-span-2' : 'md:col-span-1';
                 schemaArray.push({ "@context": "https://schema.org", "@type": "NewsArticle", "headline": item.title, "url": item.source_url });
                 
+                const uniqueKey = item.slug || item.id;
                 html += `
-                    <div onclick="openArticleModal('${item.slug || item.id}')" class="relative group rounded-xl overflow-hidden shadow-md h-72 ${colSpan} border border-gray-200 dark:border-slate-700 cursor-pointer">
+                    <div onclick="openArticleModal('${uniqueKey}')" class="relative group rounded-xl overflow-hidden shadow-md h-72 ${colSpan} border border-gray-200 dark:border-slate-700 cursor-pointer">
                         <img src="${item.image_url}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent"></div>
                         <div class="absolute bottom-0 p-5 space-y-2">
@@ -465,6 +485,7 @@
                 const tldrItems = Array.isArray(item.tldr) ? item.tldr.map(pt => `<li>• ${pt}</li>`).join('') : '';
                 schemaArray.push({ "@context": "https://schema.org", "@type": "NewsArticle", "headline": item.title, "url": item.source_url });
 
+                const uniqueKey = item.slug || item.id;
                 html += `
                     <article class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden flex flex-col sm:flex-row hover:shadow-md transition">
                         <img src="${item.image_url}" class="w-full sm:w-48 h-48 sm:h-auto object-cover shrink-0 cursor-pointer" loading="lazy" onclick="openArticleModal('${item.slug || item.id}')">
@@ -518,7 +539,8 @@
             const list = document.getElementById('trending-list');
             let html = '';
             articles.slice(0, 5).forEach((item, i) => {
-                html += `<li class="pt-2"><a href="javascript:void(0)" onclick="openArticleModal('${item.slug || item.id}')" class="group flex items-start gap-3"><span class="font-black text-lg text-amber-500 shrink-0">0${i+1}</span><div><h4 class="text-xs font-semibold group-hover:text-amber-500 text-gray-800 dark:text-gray-200 line-clamp-2">${item.title}</h4></div></a></li>`;
+                const uniqueKey = item.slug || item.id;
+                html += `<li class="pt-2"><a href="javascript:void(0)" onclick="openArticleModal('${uniqueKey}')" class="group flex items-start gap-3"><span class="font-black text-lg text-amber-500 shrink-0">0${i+1}</span><div><h4 class="text-xs font-semibold group-hover:text-amber-500 text-gray-800 dark:text-gray-200 line-clamp-2">${item.title}</h4></div></a></li>`;
             });
             list.innerHTML = html;
         }
